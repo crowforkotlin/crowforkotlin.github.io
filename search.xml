@@ -15,6 +15,8 @@
           
           <category> Android </category>
           
+          <category> 踩坑 </category>
+          
       </categories>
       
       
@@ -597,13 +599,13 @@
       
         <tags>
             
+            <tag> Kotlin </tag>
+            
             <tag> Android </tag>
             
             <tag> JNI </tag>
             
             <tag> Java </tag>
-            
-            <tag> Kotlin </tag>
             
             <tag> C </tag>
             
@@ -630,13 +632,13 @@
       
         <tags>
             
+            <tag> Kotlin </tag>
+            
             <tag> Android </tag>
             
             <tag> JNI </tag>
             
             <tag> Java </tag>
-            
-            <tag> Kotlin </tag>
             
             <tag> C </tag>
             
