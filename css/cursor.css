@@ -1,0 +1,50 @@
+/* 默认光标替换 */
+*, [html] {
+    cursor: url('/img/mouse/normal.cur'), default !important;
+}
+
+/* 链接状态光标 */
+a, [href], [data-hover] {
+    cursor: url('/img/mouse/link.cur'), pointer !important;
+}
+
+/* 文本输入状态光标 */
+input, textarea, [contenteditable] {
+    cursor: url('/img/mouse/text.cur'), text !important;
+}
+
+/* 可拖动元素光标 */
+[draggable="true"] {
+    cursor: url('/img/mouse/move.cur'), move !important;
+}
+
+/* 禁用状态光标 */
+[disabled] {
+    cursor: url('/img/mouse/unavailable.cur'), not-allowed !important;
+}
+
+/* 忙碌状态光标 */
+.busy-cursor {
+    cursor: url('/img/mouse/busy.ani'), wait !important;
+}
+
+/* 精确选择光标 */
+.precision-cursor {
+    cursor: url('/img/mouse/precision.cur'), crosshair !important;
+}
+
+/* 帮助状态光标 */
+.help-cursor {
+    cursor: url('/img/mouse/help.cur'), help !important;
+}
+
+/* 触摸设备适配 - 隐藏自定义光标 */
+@media (hover: none) {
+    #moonlight-cursor, .crystal-trail {
+        display: none !important;
+    }
+
+    body {
+        cursor: default !important;
+    }
+}
