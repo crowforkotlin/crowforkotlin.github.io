@@ -41,7 +41,7 @@
     
     
     <entry>
-      <title>Zipline 框架深入分析</title>
+      <title>Zipline 架构深度解析 (一)</title>
       <link href="/2025/11/18/Library/Zipline%E6%A1%86%E6%9E%B6%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%EF%BC%88%E4%B8%80%EF%BC%89/"/>
       <url>/2025/11/18/Library/Zipline%E6%A1%86%E6%9E%B6%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%EF%BC%88%E4%B8%80%EF%BC%89/</url>
       
@@ -564,11 +564,11 @@
     
     
     <entry>
-      <title>Android GridLayoutManager踩坑</title>
-      <link href="/2025/06/11/Android/ui/recyclerview/GridLayoutManager%E8%B8%A9%E5%9D%91/"/>
-      <url>/2025/06/11/Android/ui/recyclerview/GridLayoutManager%E8%B8%A9%E5%9D%91/</url>
+      <title>Android Fragment重建踩坑</title>
+      <link href="/2025/06/11/Android/ui/fragment/Fragment%E9%87%8D%E5%BB%BA%E8%B8%A9%E5%9D%91/"/>
+      <url>/2025/06/11/Android/ui/fragment/Fragment%E9%87%8D%E5%BB%BA%E8%B8%A9%E5%9D%91/</url>
       
-        <content type="html"><![CDATA[<blockquote><p>SpanSizeLookUp 可以设置item占满的大小，和spancount意思不同！如SpanCount &#x3D; 4, ItemA span size &#x3D; 4  代表1个Item占满大小1行 即 4&#x2F;4 ， ItemB span size &#x3D; 1 代表一个1个Item占一行的 四分之一, 将会均分4份！之前因为这里排查了不少时间</p></blockquote>]]></content>
+        <content type="html"><![CDATA[<blockquote><p>当使用Navigationd进行Fragment的导航时，返回到上一个fragmentA会导致fragmentA的界面重新创建此时数据要自己去回复，大部分的view&#x2F;viewgroup的state默认已经做好恢复处理，例如coordinator，只需要指定id才能解决恢复问题，还有recyclerview。但是如果遇到了动态addView要如何解决？我这里动态addView的视图是一个ViewPager，要实现重建时动态添加的View能够正确的恢复，必须在重建前onViewCreate去AddView，并且viewpager的adapter需要继承FragmentStateAdapter</p></blockquote>]]></content>
       
       
       <categories>
@@ -595,11 +595,11 @@
     
     
     <entry>
-      <title>Android Fragment重建踩坑</title>
-      <link href="/2025/06/11/Android/ui/fragment/Fragment%E9%87%8D%E5%BB%BA%E8%B8%A9%E5%9D%91/"/>
-      <url>/2025/06/11/Android/ui/fragment/Fragment%E9%87%8D%E5%BB%BA%E8%B8%A9%E5%9D%91/</url>
+      <title>Android GridLayoutManager踩坑</title>
+      <link href="/2025/06/11/Android/ui/recyclerview/GridLayoutManager%E8%B8%A9%E5%9D%91/"/>
+      <url>/2025/06/11/Android/ui/recyclerview/GridLayoutManager%E8%B8%A9%E5%9D%91/</url>
       
-        <content type="html"><![CDATA[<blockquote><p>当使用Navigationd进行Fragment的导航时，返回到上一个fragmentA会导致fragmentA的界面重新创建此时数据要自己去回复，大部分的view&#x2F;viewgroup的state默认已经做好恢复处理，例如coordinator，只需要指定id才能解决恢复问题，还有recyclerview。但是如果遇到了动态addView要如何解决？我这里动态addView的视图是一个ViewPager，要实现重建时动态添加的View能够正确的恢复，必须在重建前onViewCreate去AddView，并且viewpager的adapter需要继承FragmentStateAdapter</p></blockquote>]]></content>
+        <content type="html"><![CDATA[<blockquote><p>SpanSizeLookUp 可以设置item占满的大小，和spancount意思不同！如SpanCount &#x3D; 4, ItemA span size &#x3D; 4  代表1个Item占满大小1行 即 4&#x2F;4 ， ItemB span size &#x3D; 1 代表一个1个Item占一行的 四分之一, 将会均分4份！之前因为这里排查了不少时间</p></blockquote>]]></content>
       
       
       <categories>
