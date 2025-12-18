@@ -80,11 +80,11 @@
       
         <tags>
             
+            <tag> C++ </tag>
+            
             <tag> WebAssembly </tag>
             
             <tag> WASI </tag>
-            
-            <tag> C++ </tag>
             
             <tag> Wasmtime </tag>
             
@@ -148,13 +148,13 @@
             
             <tag> JNI </tag>
             
-            <tag> C++ </tag>
-            
             <tag> Zipline </tag>
             
             <tag> Kotlin/JS </tag>
             
             <tag> QuickJS </tag>
+            
+            <tag> C++ </tag>
             
         </tags>
       
@@ -628,35 +628,6 @@
     
     
     <entry>
-      <title>📡 TCP原始数据包抓取详解</title>
-      <link href="/2025/06/11/%E6%8A%93%E5%8C%85/TCP%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE/"/>
-      <url>/2025/06/11/%E6%8A%93%E5%8C%85/TCP%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE/</url>
-      
-        <content type="html"><![CDATA[<h2 id="🚀-抓包流程"><a href="#🚀-抓包流程" class="headerlink" title="🚀 抓包流程"></a>🚀 抓包流程</h2><div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">环境检查</button><button type="button" class="tab">执行抓包</button><button type="button" class="tab">数据分析</button></div><div class="tab-contents"><div class="tab-item-content active"><h3 id="🔍-网络接口查看"><a href="#🔍-网络接口查看" class="headerlink" title="🔍 网络接口查看"></a>🔍 网络接口查看</h3><div class="note blue icon-padding modern"><i class="note-icon fas fa-network-wired"></i><p><strong>查看可用的网络接口</strong></p></div><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看网络接口信息</span></span><br><span class="line">ifconfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者使用ip命令</span></span><br><span class="line">ip addr show</span><br></pre></td></tr></table></figure><div class="note info icon-padding modern"><i class="note-icon fas fa-info-circle"></i><p><strong>常见网络接口：</strong></p><ul><li><code>wlan0</code> - WiFi接口</li><li><code>rmnet0</code> - 移动数据接口  </li><li><code>eth0</code> - 以太网接口</li><li><code>lo</code> - 回环接口</li></ul></div></div><div class="tab-item-content"><h3 id="🎯-tcpdump命令详解"><a href="#🎯-tcpdump命令详解" class="headerlink" title="🎯 tcpdump命令详解"></a>🎯 tcpdump命令详解</h3><div class="note purple icon-padding modern"><i class="note-icon fas fa-terminal"></i><p><strong>核心抓包命令</strong></p></div><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基本抓包命令</span></span><br><span class="line">tcpdump -i &lt;interface_name&gt; -s 0 -w /sdcard/capture.pcap</span><br></pre></td></tr></table></figure><div class="note success icon-padding modern"><i class="note-icon fas fa-cogs"></i><p><strong>参数说明：</strong></p><ul><li><code>-i &lt;interface_name&gt;</code> - 指定网络接口（如wlan0）</li><li><code>-s 0</code> - 捕获完整数据包（不截断）</li><li><code>-w filename</code> - 将数据写入文件</li><li><code>/sdcard/capture.pcap</code> - 输出文件路径</li></ul></div><h3 id="📝-实际操作示例"><a href="#📝-实际操作示例" class="headerlink" title="📝 实际操作示例"></a>📝 实际操作示例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 示例1：抓取WiFi接口的所有数据包</span></span><br><span class="line">tcpdump -i wlan0 -s 0 -w /sdcard/wifi_capture.pcap</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例2：抓取特定端口的数据包</span></span><br><span class="line">tcpdump -i wlan0 -s 0 port 80 -w /sdcard/http_capture.pcap</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例3：抓取特定主机的数据包</span></span><br><span class="line">tcpdump -i wlan0 -s 0 host 192.168.1.1 -w /sdcard/host_capture.pcap</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><h3 id="📤-文件传输"><a href="#📤-文件传输" class="headerlink" title="📤 文件传输"></a>📤 文件传输</h3><div class="note green icon-padding modern"><i class="note-icon fas fa-download"></i><p><strong>第三步：传输pcap文件到电脑</strong></p></div><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用adb pull命令传输文件</span></span><br><span class="line">adb pull /sdcard/capture.pcap ./</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者指定具体路径</span></span><br><span class="line">adb pull /sdcard/capture.pcap C:\captures\</span><br></pre></td></tr></table></figure><h3 id="🔬-Wireshark分析"><a href="#🔬-Wireshark分析" class="headerlink" title="🔬 Wireshark分析"></a>🔬 Wireshark分析</h3><div class="note blue icon-padding modern"><i class="note-icon fas fa-search"></i><p><strong>第四步：使用Wireshark打开pcap文件进行分析</strong></p></div><div class="note info icon-padding modern"><i class="note-icon fas fa-lightbulb"></i><p><strong>Wireshark分析要点：</strong></p><ul><li>使用过滤器筛选特定协议：<code>tcp</code>, <code>http</code>, <code>dns</code></li><li>查看数据包详细信息和十六进制数据</li><li>分析网络流量模式和异常行为</li><li>导出特定会话或对象</li></ul></div></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div><h2 id="🔧-高级技巧"><a href="#🔧-高级技巧" class="headerlink" title="🔧 高级技巧"></a>🔧 高级技巧</h2><div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">过滤选项</button><button type="button" class="tab">实时监控</button></div><div class="tab-contents"><div class="tab-item-content active"><h3 id="🎛️-tcpdump过滤器"><a href="#🎛️-tcpdump过滤器" class="headerlink" title="🎛️ tcpdump过滤器"></a>🎛️ tcpdump过滤器</h3><div class="note primary icon-padding modern"><i class="note-icon fas fa-filter"></i><p><strong>常用过滤条件</strong></p></div><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 只抓取TCP协议</span></span><br><span class="line">tcpdump -i wlan0 tcp -w tcp_only.pcap</span><br><span class="line"></span><br><span class="line"><span class="comment"># 抓取特定端口范围</span></span><br><span class="line">tcpdump -i wlan0 portrange 80-443 -w web_traffic.pcap</span><br><span class="line"></span><br><span class="line"><span class="comment"># 抓取来自/到特定IP的数据包</span></span><br><span class="line">tcpdump -i wlan0 src 192.168.1.100 -w from_host.pcap</span><br><span class="line">tcpdump -i wlan0 dst 192.168.1.100 -w to_host.pcap</span><br><span class="line"></span><br><span class="line"><span class="comment"># 组合条件（HTTP和HTTPS流量）</span></span><br><span class="line">tcpdump -i wlan0 <span class="string">&#x27;port 80 or port 443&#x27;</span> -w web_all.pcap</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><h3 id="📊-实时数据包监控"><a href="#📊-实时数据包监控" class="headerlink" title="📊 实时数据包监控"></a>📊 实时数据包监控</h3><div class="note orange icon-padding modern"><i class="note-icon fas fa-eye"></i><p><strong>实时查看数据包（不保存文件）</strong></p></div><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 实时显示数据包摘要</span></span><br><span class="line">tcpdump -i wlan0 -n</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示详细的数据包内容</span></span><br><span class="line">tcpdump -i wlan0 -A</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示十六进制和ASCII内容</span></span><br><span class="line">tcpdump -i wlan0 -X</span><br><span class="line"></span><br><span class="line"><span class="comment"># 限制显示的数据包数量</span></span><br><span class="line">tcpdump -i wlan0 -c 100</span><br></pre></td></tr></table></figure></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div><h2 id="🐛-常见问题排查"><a href="#🐛-常见问题排查" class="headerlink" title="🐛 常见问题排查"></a>🐛 常见问题排查</h2><h3 id="🔴-权限问题"><a href="#🔴-权限问题" class="headerlink" title="🔴 权限问题"></a>🔴 权限问题</h3><div class="note red icon-padding modern"><i class="note-icon fas fa-times-circle"></i><p><strong>问题：Permission denied</strong></p></div><div class="note green icon-padding modern"><i class="note-icon fas fa-lightbulb"></i><p><strong>解决方案：</strong></p><ol><li>确保设备已获得Root权限</li><li>使用<code>su</code>命令切换到超级用户</li><li>检查tcpdump工具是否正确安装</li></ol></div><h3 id="🟡-接口不存在"><a href="#🟡-接口不存在" class="headerlink" title="🟡 接口不存在"></a>🟡 接口不存在</h3><div class="note warning icon-padding modern"><i class="note-icon fas fa-exclamation-triangle"></i><p><strong>问题：指定的网络接口不存在</strong></p></div><div class="note blue icon-padding modern"><i class="note-icon fas fa-tools"></i><p><strong>解决方案：</strong><br>使用<code>ifconfig</code>或<code>ip addr</code>命令查看实际可用的网络接口名称</p></div><h2 id="🔗-相关工具"><a href="#🔗-相关工具" class="headerlink" title="🔗 相关工具"></a>🔗 相关工具</h2><div class="btn-center"><a class="btn-beautify blue larger" href="https://www.wireshark.org" title="Wireshark官网"><i class="fas fa-external-link-alt"></i><span>Wireshark官网</span></a><a class="btn-beautify green larger" href="https://www.tcpdump.org" title="tcpdump官网"><i class="fas fa-external-link-alt"></i><span>tcpdump官网</span></a></div>]]></content>
-      
-      
-      <categories>
-          
-          <category> 抓包 </category>
-          
-          <category> TCP </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 抓包 </tag>
-            
-            <tag> TCP </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>① 利用Blutter反编译Flutter Apk的Dart文件</title>
       <link href="/2025/06/11/%E9%80%86%E5%90%91/Flutter%E9%80%86%E5%90%91%E6%B5%81%E7%A8%8B/"/>
       <url>/2025/06/11/%E9%80%86%E5%90%91/Flutter%E9%80%86%E5%90%91%E6%B5%81%E7%A8%8B/</url>
@@ -686,11 +657,11 @@
     
     
     <entry>
-      <title>Android GridLayoutManager踩坑</title>
-      <link href="/2025/06/11/Android/ui/recyclerview/GridLayoutManager%E8%B8%A9%E5%9D%91/"/>
-      <url>/2025/06/11/Android/ui/recyclerview/GridLayoutManager%E8%B8%A9%E5%9D%91/</url>
+      <title>Android Fragment重建踩坑</title>
+      <link href="/2025/06/11/Android/ui/fragment/Fragment%E9%87%8D%E5%BB%BA%E8%B8%A9%E5%9D%91/"/>
+      <url>/2025/06/11/Android/ui/fragment/Fragment%E9%87%8D%E5%BB%BA%E8%B8%A9%E5%9D%91/</url>
       
-        <content type="html"><![CDATA[<blockquote><p>SpanSizeLookUp 可以设置item占满的大小，和spancount意思不同！如SpanCount &#x3D; 4, ItemA span size &#x3D; 4  代表1个Item占满大小1行 即 4&#x2F;4 ， ItemB span size &#x3D; 1 代表一个1个Item占一行的 四分之一, 将会均分4份！之前因为这里排查了不少时间</p></blockquote>]]></content>
+        <content type="html"><![CDATA[<blockquote><p>当使用Navigationd进行Fragment的导航时，返回到上一个fragmentA会导致fragmentA的界面重新创建此时数据要自己去回复，大部分的view&#x2F;viewgroup的state默认已经做好恢复处理，例如coordinator，只需要指定id才能解决恢复问题，还有recyclerview。但是如果遇到了动态addView要如何解决？我这里动态addView的视图是一个ViewPager，要实现重建时动态添加的View能够正确的恢复，必须在重建前onViewCreate去AddView，并且viewpager的adapter需要继承FragmentStateAdapter</p></blockquote>]]></content>
       
       
       <categories>
@@ -717,11 +688,40 @@
     
     
     <entry>
-      <title>Android Fragment重建踩坑</title>
-      <link href="/2025/06/11/Android/ui/fragment/Fragment%E9%87%8D%E5%BB%BA%E8%B8%A9%E5%9D%91/"/>
-      <url>/2025/06/11/Android/ui/fragment/Fragment%E9%87%8D%E5%BB%BA%E8%B8%A9%E5%9D%91/</url>
+      <title>📡 TCP原始数据包抓取详解</title>
+      <link href="/2025/06/11/%E6%8A%93%E5%8C%85/TCP%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE/"/>
+      <url>/2025/06/11/%E6%8A%93%E5%8C%85/TCP%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE/</url>
       
-        <content type="html"><![CDATA[<blockquote><p>当使用Navigationd进行Fragment的导航时，返回到上一个fragmentA会导致fragmentA的界面重新创建此时数据要自己去回复，大部分的view&#x2F;viewgroup的state默认已经做好恢复处理，例如coordinator，只需要指定id才能解决恢复问题，还有recyclerview。但是如果遇到了动态addView要如何解决？我这里动态addView的视图是一个ViewPager，要实现重建时动态添加的View能够正确的恢复，必须在重建前onViewCreate去AddView，并且viewpager的adapter需要继承FragmentStateAdapter</p></blockquote>]]></content>
+        <content type="html"><![CDATA[<h2 id="🚀-抓包流程"><a href="#🚀-抓包流程" class="headerlink" title="🚀 抓包流程"></a>🚀 抓包流程</h2><div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">环境检查</button><button type="button" class="tab">执行抓包</button><button type="button" class="tab">数据分析</button></div><div class="tab-contents"><div class="tab-item-content active"><h3 id="🔍-网络接口查看"><a href="#🔍-网络接口查看" class="headerlink" title="🔍 网络接口查看"></a>🔍 网络接口查看</h3><div class="note blue icon-padding modern"><i class="note-icon fas fa-network-wired"></i><p><strong>查看可用的网络接口</strong></p></div><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看网络接口信息</span></span><br><span class="line">ifconfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者使用ip命令</span></span><br><span class="line">ip addr show</span><br></pre></td></tr></table></figure><div class="note info icon-padding modern"><i class="note-icon fas fa-info-circle"></i><p><strong>常见网络接口：</strong></p><ul><li><code>wlan0</code> - WiFi接口</li><li><code>rmnet0</code> - 移动数据接口  </li><li><code>eth0</code> - 以太网接口</li><li><code>lo</code> - 回环接口</li></ul></div></div><div class="tab-item-content"><h3 id="🎯-tcpdump命令详解"><a href="#🎯-tcpdump命令详解" class="headerlink" title="🎯 tcpdump命令详解"></a>🎯 tcpdump命令详解</h3><div class="note purple icon-padding modern"><i class="note-icon fas fa-terminal"></i><p><strong>核心抓包命令</strong></p></div><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基本抓包命令</span></span><br><span class="line">tcpdump -i &lt;interface_name&gt; -s 0 -w /sdcard/capture.pcap</span><br></pre></td></tr></table></figure><div class="note success icon-padding modern"><i class="note-icon fas fa-cogs"></i><p><strong>参数说明：</strong></p><ul><li><code>-i &lt;interface_name&gt;</code> - 指定网络接口（如wlan0）</li><li><code>-s 0</code> - 捕获完整数据包（不截断）</li><li><code>-w filename</code> - 将数据写入文件</li><li><code>/sdcard/capture.pcap</code> - 输出文件路径</li></ul></div><h3 id="📝-实际操作示例"><a href="#📝-实际操作示例" class="headerlink" title="📝 实际操作示例"></a>📝 实际操作示例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 示例1：抓取WiFi接口的所有数据包</span></span><br><span class="line">tcpdump -i wlan0 -s 0 -w /sdcard/wifi_capture.pcap</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例2：抓取特定端口的数据包</span></span><br><span class="line">tcpdump -i wlan0 -s 0 port 80 -w /sdcard/http_capture.pcap</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例3：抓取特定主机的数据包</span></span><br><span class="line">tcpdump -i wlan0 -s 0 host 192.168.1.1 -w /sdcard/host_capture.pcap</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><h3 id="📤-文件传输"><a href="#📤-文件传输" class="headerlink" title="📤 文件传输"></a>📤 文件传输</h3><div class="note green icon-padding modern"><i class="note-icon fas fa-download"></i><p><strong>第三步：传输pcap文件到电脑</strong></p></div><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用adb pull命令传输文件</span></span><br><span class="line">adb pull /sdcard/capture.pcap ./</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者指定具体路径</span></span><br><span class="line">adb pull /sdcard/capture.pcap C:\captures\</span><br></pre></td></tr></table></figure><h3 id="🔬-Wireshark分析"><a href="#🔬-Wireshark分析" class="headerlink" title="🔬 Wireshark分析"></a>🔬 Wireshark分析</h3><div class="note blue icon-padding modern"><i class="note-icon fas fa-search"></i><p><strong>第四步：使用Wireshark打开pcap文件进行分析</strong></p></div><div class="note info icon-padding modern"><i class="note-icon fas fa-lightbulb"></i><p><strong>Wireshark分析要点：</strong></p><ul><li>使用过滤器筛选特定协议：<code>tcp</code>, <code>http</code>, <code>dns</code></li><li>查看数据包详细信息和十六进制数据</li><li>分析网络流量模式和异常行为</li><li>导出特定会话或对象</li></ul></div></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div><h2 id="🔧-高级技巧"><a href="#🔧-高级技巧" class="headerlink" title="🔧 高级技巧"></a>🔧 高级技巧</h2><div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">过滤选项</button><button type="button" class="tab">实时监控</button></div><div class="tab-contents"><div class="tab-item-content active"><h3 id="🎛️-tcpdump过滤器"><a href="#🎛️-tcpdump过滤器" class="headerlink" title="🎛️ tcpdump过滤器"></a>🎛️ tcpdump过滤器</h3><div class="note primary icon-padding modern"><i class="note-icon fas fa-filter"></i><p><strong>常用过滤条件</strong></p></div><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 只抓取TCP协议</span></span><br><span class="line">tcpdump -i wlan0 tcp -w tcp_only.pcap</span><br><span class="line"></span><br><span class="line"><span class="comment"># 抓取特定端口范围</span></span><br><span class="line">tcpdump -i wlan0 portrange 80-443 -w web_traffic.pcap</span><br><span class="line"></span><br><span class="line"><span class="comment"># 抓取来自/到特定IP的数据包</span></span><br><span class="line">tcpdump -i wlan0 src 192.168.1.100 -w from_host.pcap</span><br><span class="line">tcpdump -i wlan0 dst 192.168.1.100 -w to_host.pcap</span><br><span class="line"></span><br><span class="line"><span class="comment"># 组合条件（HTTP和HTTPS流量）</span></span><br><span class="line">tcpdump -i wlan0 <span class="string">&#x27;port 80 or port 443&#x27;</span> -w web_all.pcap</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><h3 id="📊-实时数据包监控"><a href="#📊-实时数据包监控" class="headerlink" title="📊 实时数据包监控"></a>📊 实时数据包监控</h3><div class="note orange icon-padding modern"><i class="note-icon fas fa-eye"></i><p><strong>实时查看数据包（不保存文件）</strong></p></div><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 实时显示数据包摘要</span></span><br><span class="line">tcpdump -i wlan0 -n</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示详细的数据包内容</span></span><br><span class="line">tcpdump -i wlan0 -A</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示十六进制和ASCII内容</span></span><br><span class="line">tcpdump -i wlan0 -X</span><br><span class="line"></span><br><span class="line"><span class="comment"># 限制显示的数据包数量</span></span><br><span class="line">tcpdump -i wlan0 -c 100</span><br></pre></td></tr></table></figure></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div><h2 id="🐛-常见问题排查"><a href="#🐛-常见问题排查" class="headerlink" title="🐛 常见问题排查"></a>🐛 常见问题排查</h2><h3 id="🔴-权限问题"><a href="#🔴-权限问题" class="headerlink" title="🔴 权限问题"></a>🔴 权限问题</h3><div class="note red icon-padding modern"><i class="note-icon fas fa-times-circle"></i><p><strong>问题：Permission denied</strong></p></div><div class="note green icon-padding modern"><i class="note-icon fas fa-lightbulb"></i><p><strong>解决方案：</strong></p><ol><li>确保设备已获得Root权限</li><li>使用<code>su</code>命令切换到超级用户</li><li>检查tcpdump工具是否正确安装</li></ol></div><h3 id="🟡-接口不存在"><a href="#🟡-接口不存在" class="headerlink" title="🟡 接口不存在"></a>🟡 接口不存在</h3><div class="note warning icon-padding modern"><i class="note-icon fas fa-exclamation-triangle"></i><p><strong>问题：指定的网络接口不存在</strong></p></div><div class="note blue icon-padding modern"><i class="note-icon fas fa-tools"></i><p><strong>解决方案：</strong><br>使用<code>ifconfig</code>或<code>ip addr</code>命令查看实际可用的网络接口名称</p></div><h2 id="🔗-相关工具"><a href="#🔗-相关工具" class="headerlink" title="🔗 相关工具"></a>🔗 相关工具</h2><div class="btn-center"><a class="btn-beautify blue larger" href="https://www.wireshark.org" title="Wireshark官网"><i class="fas fa-external-link-alt"></i><span>Wireshark官网</span></a><a class="btn-beautify green larger" href="https://www.tcpdump.org" title="tcpdump官网"><i class="fas fa-external-link-alt"></i><span>tcpdump官网</span></a></div>]]></content>
+      
+      
+      <categories>
+          
+          <category> 抓包 </category>
+          
+          <category> TCP </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 抓包 </tag>
+            
+            <tag> TCP </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Android GridLayoutManager踩坑</title>
+      <link href="/2025/06/11/Android/ui/recyclerview/GridLayoutManager%E8%B8%A9%E5%9D%91/"/>
+      <url>/2025/06/11/Android/ui/recyclerview/GridLayoutManager%E8%B8%A9%E5%9D%91/</url>
+      
+        <content type="html"><![CDATA[<blockquote><p>SpanSizeLookUp 可以设置item占满的大小，和spancount意思不同！如SpanCount &#x3D; 4, ItemA span size &#x3D; 4  代表1个Item占满大小1行 即 4&#x2F;4 ， ItemB span size &#x3D; 1 代表一个1个Item占一行的 四分之一, 将会均分4份！之前因为这里排查了不少时间</p></blockquote>]]></content>
       
       
       <categories>
