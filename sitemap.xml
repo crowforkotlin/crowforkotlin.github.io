@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://crowforkotlin.github.io/2026/01/01/Wasm/Wasmtime%20JIT%20%E7%BC%96%E8%AF%91%E6%9C%BA%E5%88%B6%E4%B8%8E%20Cranelift%20%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86%EF%BC%9A%E5%9F%BA%E4%BA%8E%20Issue%20#12229%20%E7%9A%84%E6%8A%80%E6%9C%AF%E6%9C%AF%E8%AF%AD%E8%A7%A3%E6%9E%90/</loc>
+    <loc>https://crowforkotlin.github.io/2026/01/01/Wasm/Wasmtime%E5%9F%BA%E4%BA%8EIssue12229%E8%A7%A3%E6%9E%90%E5%92%8CJit%E3%80%81Cranelift%E6%9C%BA%E5%88%B6%E4%BA%86%E8%A7%A3/</loc>
     
     <lastmod>2026-01-01</lastmod>
     
@@ -47,7 +47,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/2025/06/11/%E6%8A%93%E5%8C%85/TCP%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE/</loc>
+    <loc>https://crowforkotlin.github.io/2025/07/21/%E5%AE%9E%E7%94%A8%E6%8A%80%E5%B7%A7/%E5%88%A9%E7%94%A8mklink%E8%8A%82%E7%9C%81%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/</loc>
     
     <lastmod>2026-01-01</lastmod>
     
@@ -56,7 +56,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/2025/07/21/%E5%AE%9E%E7%94%A8%E6%8A%80%E5%B7%A7/%E5%88%A9%E7%94%A8mklink%E8%8A%82%E7%9C%81%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/</loc>
+    <loc>https://crowforkotlin.github.io/2025/06/11/%E6%8A%93%E5%8C%85/TCP%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE/</loc>
     
     <lastmod>2026-01-01</lastmod>
     
@@ -74,15 +74,6 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/categories/index.html</loc>
-    
-    <lastmod>2026-01-01</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://crowforkotlin.github.io/about/index.html</loc>
     
     <lastmod>2026-01-01</lastmod>
@@ -92,7 +83,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/2025/08/08/Unix/Linux%20su%E5%90%8E%E5%89%8D%E7%BC%80%E4%B8%A2%E5%A4%B1%E9%A2%9C%E8%89%B2/</loc>
+    <loc>https://crowforkotlin.github.io/categories/index.html</loc>
     
     <lastmod>2026-01-01</lastmod>
     
@@ -110,6 +101,15 @@
   </url>
   
   <url>
+    <loc>https://crowforkotlin.github.io/2025/08/08/Unix/Linux%20su%E5%90%8E%E5%89%8D%E7%BC%80%E4%B8%A2%E5%A4%B1%E9%A2%9C%E8%89%B2/</loc>
+    
+    <lastmod>2026-01-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://crowforkotlin.github.io/2025/11/27/Wasm/Android%E4%BD%BF%E7%94%A8JNI%E5%B5%8C%E5%85%A5Wasmtime/</loc>
     
     <lastmod>2026-01-01</lastmod>
@@ -119,7 +119,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/2025/10/13/Vim/nvim%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E9%83%A8%E7%BD%B2/</loc>
+    <loc>https://crowforkotlin.github.io/2025/11/25/Wasm/Wasm%E5%92%8CWasi%E5%8C%BA%E5%88%AB%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E5%BA%86/</loc>
     
     <lastmod>2026-01-01</lastmod>
     
@@ -137,7 +137,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/2025/11/25/Wasm/Wasm%E5%92%8CWasi%E5%8C%BA%E5%88%AB%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E5%BA%86/</loc>
+    <loc>https://crowforkotlin.github.io/2025/10/13/Vim/nvim%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E9%83%A8%E7%BD%B2/</loc>
     
     <lastmod>2026-01-01</lastmod>
     
@@ -164,15 +164,6 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/2025/11/18/Library/Zipline%E6%A1%86%E6%9E%B6%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%EF%BC%88%E4%BA%8C%EF%BC%89/</loc>
-    
-    <lastmod>2026-01-01</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://crowforkotlin.github.io/2025/11/18/Library/Zipline%E6%A1%86%E6%9E%B6%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%EF%BC%88%E4%B8%80%EF%BC%89/</loc>
     
     <lastmod>2026-01-01</lastmod>
@@ -182,7 +173,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/2025/06/28/HEXO/01Hexo%E6%90%AD%E5%BB%BA%E5%B9%B6%E4%BD%BF%E7%94%A8Butterfly%E4%B8%BB%E9%A2%98/</loc>
+    <loc>https://crowforkotlin.github.io/2025/11/18/Library/Zipline%E6%A1%86%E6%9E%B6%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%EF%BC%88%E4%BA%8C%EF%BC%89/</loc>
     
     <lastmod>2026-01-01</lastmod>
     
@@ -192,6 +183,15 @@
   
   <url>
     <loc>https://crowforkotlin.github.io/2025/12/03/Git/Zsh/</loc>
+    
+    <lastmod>2026-01-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://crowforkotlin.github.io/2025/06/28/HEXO/01Hexo%E6%90%AD%E5%BB%BA%E5%B9%B6%E4%BD%BF%E7%94%A8Butterfly%E4%B8%BB%E9%A2%98/</loc>
     
     <lastmod>2026-01-01</lastmod>
     
@@ -227,7 +227,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/2025/08/08/Android/adb%20shell%20&%20wsl%20root%E5%AE%9E%E7%8E%B0%E5%BD%A9%E8%89%B2%E5%91%BD%E4%BB%A4%E6%8F%90%E7%A4%BA%E7%AC%A6/</loc>
+    <loc>https://crowforkotlin.github.io/2025/07/02/Android/BlurMaskFilter%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/</loc>
     
     <lastmod>2026-01-01</lastmod>
     
@@ -236,7 +236,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/2025/07/02/Android/BlurMaskFilter%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/</loc>
+    <loc>https://crowforkotlin.github.io/2025/08/08/Android/adb%20shell%20&%20wsl%20root%E5%AE%9E%E7%8E%B0%E5%BD%A9%E8%89%B2%E5%91%BD%E4%BB%A4%E6%8F%90%E7%A4%BA%E7%AC%A6/</loc>
     
     <lastmod>2026-01-01</lastmod>
     
@@ -272,7 +272,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/2025/07/02/Android/Adb%20shell%20%E5%88%86%E9%85%8D%E4%BC%AA%E7%BB%88%E7%AB%AF/</loc>
+    <loc>https://crowforkotlin.github.io/2023/09/27/Android/02JNI%E6%89%93%E5%BC%80%E5%AE%89%E5%8D%93%E4%B8%B2%E5%8F%A3/</loc>
     
     <lastmod>2026-01-01</lastmod>
     
@@ -281,7 +281,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/2025/10/28/Android/Android%E7%83%AD%E4%BF%AE%E5%92%8C%E5%8A%A8%E6%80%81%E5%8C%96%E6%96%B9%E6%A1%88/</loc>
+    <loc>https://crowforkotlin.github.io/2025/07/02/Android/Adb%20shell%20%E5%88%86%E9%85%8D%E4%BC%AA%E7%BB%88%E7%AB%AF/</loc>
     
     <lastmod>2026-01-01</lastmod>
     
@@ -299,7 +299,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/2023/09/27/Android/02JNI%E6%89%93%E5%BC%80%E5%AE%89%E5%8D%93%E4%B8%B2%E5%8F%A3/</loc>
+    <loc>https://crowforkotlin.github.io/2025/10/28/Android/Android%E7%83%AD%E4%BF%AE%E5%92%8C%E5%8A%A8%E6%80%81%E5%8C%96%E6%96%B9%E6%A1%88/</loc>
     
     <lastmod>2026-01-01</lastmod>
     
@@ -382,20 +382,6 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/tags/%E7%83%AD%E4%BF%AE%E5%A4%8D/</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://crowforkotlin.github.io/tags/%E7%83%AD%E5%8A%A0%E8%BD%BD/</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://crowforkotlin.github.io/tags/Avd/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
@@ -417,13 +403,6 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/tags/Ubuntu/</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://crowforkotlin.github.io/tags/%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
@@ -431,7 +410,21 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/tags/Hexo/</loc>
+    <loc>https://crowforkotlin.github.io/tags/Ubuntu/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://crowforkotlin.github.io/tags/%E7%83%AD%E4%BF%AE%E5%A4%8D/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://crowforkotlin.github.io/tags/%E7%83%AD%E5%8A%A0%E8%BD%BD/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -473,28 +466,14 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/tags/Zipline/</loc>
+    <loc>https://crowforkotlin.github.io/tags/Hexo/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/tags/Kotlin-JS/</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://crowforkotlin.github.io/tags/QuickJS/</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://crowforkotlin.github.io/tags/C/</loc>
+    <loc>https://crowforkotlin.github.io/tags/Shell/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -529,14 +508,28 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/tags/Shell/</loc>
+    <loc>https://crowforkotlin.github.io/tags/Zipline/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/tags/Unix/</loc>
+    <loc>https://crowforkotlin.github.io/tags/Kotlin-JS/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://crowforkotlin.github.io/tags/QuickJS/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://crowforkotlin.github.io/tags/C/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -544,6 +537,13 @@
   
   <url>
     <loc>https://crowforkotlin.github.io/tags/Python/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://crowforkotlin.github.io/tags/Unix/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -565,6 +565,13 @@
   
   <url>
     <loc>https://crowforkotlin.github.io/tags/Wasmtime/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://crowforkotlin.github.io/tags/WasmEdge/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -599,6 +606,13 @@
   </url>
   
   <url>
+    <loc>https://crowforkotlin.github.io/tags/Command/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://crowforkotlin.github.io/tags/%E6%8A%93%E5%8C%85/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
@@ -607,20 +621,6 @@
   
   <url>
     <loc>https://crowforkotlin.github.io/tags/TCP/</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://crowforkotlin.github.io/tags/WasmEdge/</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://crowforkotlin.github.io/tags/Command/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -664,13 +664,6 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/categories/Adb/</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://crowforkotlin.github.io/categories/Android/%E8%B8%A9%E5%9D%91/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
@@ -678,7 +671,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/categories/Hexo/</loc>
+    <loc>https://crowforkotlin.github.io/categories/Adb/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -699,7 +692,21 @@
   </url>
   
   <url>
+    <loc>https://crowforkotlin.github.io/categories/Hexo/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://crowforkotlin.github.io/categories/Library/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://crowforkotlin.github.io/categories/Python/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -714,13 +721,6 @@
   
   <url>
     <loc>https://crowforkotlin.github.io/categories/Unix/</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://crowforkotlin.github.io/categories/Python/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -748,7 +748,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/categories/Git/Config/</loc>
+    <loc>https://crowforkotlin.github.io/categories/Command/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -762,35 +762,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/categories/Command/</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://crowforkotlin.github.io/categories/Library/%E6%A1%A5%E6%8E%A5/</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://crowforkotlin.github.io/categories/Hexo/Shell/</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://crowforkotlin.github.io/categories/%E6%8A%93%E5%8C%85/TCP/</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://crowforkotlin.github.io/categories/Library/%E6%A1%A5%E6%8E%A5/KMP/</loc>
+    <loc>https://crowforkotlin.github.io/categories/Git/Config/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -804,7 +776,35 @@
   </url>
   
   <url>
+    <loc>https://crowforkotlin.github.io/categories/Hexo/Shell/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://crowforkotlin.github.io/categories/Library/%E6%A1%A5%E6%8E%A5/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://crowforkotlin.github.io/categories/%E6%8A%93%E5%8C%85/TCP/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://crowforkotlin.github.io/categories/Flutter/%E9%80%86%E5%90%91/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://crowforkotlin.github.io/categories/Library/%E6%A1%A5%E6%8E%A5/KMP/</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
