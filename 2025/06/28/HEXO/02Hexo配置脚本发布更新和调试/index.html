@@ -1,0 +1,522 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>② Hexo 部署到GitLab Pages - 本地Runner自动化脚本 | crowforkotlin</title><meta name="author" content="crowforkotlin"><meta name="copyright" content="crowforkotlin"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="详细介绍如何使用GitLab Pages部署Hexo博客，配置本地Runner，并编写自动化脚本提升开发效率"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "② Hexo 部署到GitLab Pages - 本地Runner自动化脚本",
+  "url": "https://crowforkotlin.github.io/2025/06/28/HEXO/02Hexo%E9%85%8D%E7%BD%AE%E8%84%9A%E6%9C%AC%E5%8F%91%E5%B8%83%E6%9B%B4%E6%96%B0%E5%92%8C%E8%B0%83%E8%AF%95/",
+  "image": "https://crowforkotlin.github.io/img/cover_bg2.jpg",
+  "datePublished": "2025-06-28T10:00:00.000Z",
+  "dateModified": "2026-01-01T08:00:33.488Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "crowforkotlin",
+      "url": "https://wuya.click"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/avatar_round.webp"><link rel="canonical" href="https://crowforkotlin.github.io/2025/06/28/HEXO/02Hexo%E9%85%8D%E7%BD%AE%E8%84%9A%E6%9C%AC%E5%8F%91%E5%B8%83%E6%9B%B4%E6%96%B0%E5%92%8C%E8%B0%83%E8%AF%95/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200,"highlightFullpage":true,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '② Hexo 部署到GitLab Pages - 本地Runner自动化脚本',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/cursor.css"><link rel="styleisheet" href="/self/Kimbiedark.css"><meta name="generator" content="Hexo 6.2.0"></head><body><div id="web_bg" style="background-image: url(/img/home_top.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">46</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">23</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/android"><i class="fa-fw fab fa-android"></i><span> 安卓</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 相关链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: linear-gradient(20deg, #00000000, #00000000);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">crowforkotlin</span></a><a class="nav-page-title" href="/"><span class="site-name">② Hexo 部署到GitLab Pages - 本地Runner自动化脚本</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/android"><i class="fa-fw fab fa-android"></i><span> 安卓</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 相关链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">② Hexo 部署到GitLab Pages - 本地Runner自动化脚本</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-06-28T10:00:00.000Z" title="发表于 2025-06-28 18:00:00">2025-06-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-01-01T08:00:33.488Z" title="更新于 2026-01-01 16:00:33">2026-01-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Hexo/">Hexo</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/2025/06/28/HEXO/02Hexo%E9%85%8D%E7%BD%AE%E8%84%9A%E6%9C%AC%E5%8F%91%E5%B8%83%E6%9B%B4%E6%96%B0%E5%92%8C%E8%B0%83%E8%AF%95/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>在第一篇教程中，我们已经详细介绍了如何搭建Hexo博客。接下来我们将学习如何将博客部署到GitLab Pages，并利用自定义脚本实现快捷运行和同步。</p>
+<h2 id="🌐-什么是GitLab-Pages？"><a href="#🌐-什么是GitLab-Pages？" class="headerlink" title="🌐 什么是GitLab Pages？"></a>🌐 什么是GitLab Pages？</h2><div class="note info modern"><p><strong>GitLab Pages 简介</strong><br>GitLab Pages 是 GitLab 提供的静态网站托管服务。通过将网站文件推送到 GitLab 仓库，GitLab 会自动构建并部署网站，用户可以通过 GitLab 提供的域名访问自己的网站。</p>
+</div>
+
+<h3 id="📝-仓库命名规则"><a href="#📝-仓库命名规则" class="headerlink" title="📝 仓库命名规则"></a>📝 仓库命名规则</h3><div class="note warning flat"><p><strong>重要提醒</strong><br>假设你的用户名是 <code>crowforkotlin</code>，那么仓库名称必须是 <code>crowforkotlin.gitlab.io</code><br>这个命名规则是<strong>固定的</strong>，不能随意更改！</p>
+</div>
+
+<h3 id="⚙️-配置站点URL"><a href="#⚙️-配置站点URL" class="headerlink" title="⚙️ 配置站点URL"></a>⚙️ 配置站点URL</h3><p>在推送代码到GitLab之前，需要修改根目录的 <code>_config.yml</code> 文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Set your site url here</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">https://crowforkotlin.gitlab.io/</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="🏃‍♂️-什么是GitLab-Runner？"><a href="#🏃‍♂️-什么是GitLab-Runner？" class="headerlink" title="🏃‍♂️ 什么是GitLab Runner？"></a>🏃‍♂️ 什么是GitLab Runner？</h2><div class="note primary modern"><p><strong>GitLab Runner 介绍</strong><br>GitLab Runner 是一个开源项目，用于 GitLab CI&#x2F;CD 的执行环境。它可以在多种环境中运行，包括本地机器、虚拟机和云实例。GitLab Runner 负责接收来自 GitLab 的构建请求，并在指定的环境中执行相应的构建任务。</p>
+</div>
+
+<h2 id="📄-配置CI-x2F-CD文件"><a href="#📄-配置CI-x2F-CD文件" class="headerlink" title="📄 配置CI&#x2F;CD文件"></a>📄 配置CI&#x2F;CD文件</h2><p>当你把代码推送到GitLab后，此时GitLab Pages并不会生效，因为还需要一个 <code>.gitlab-ci.yml</code> 文件。这个文件是GitLab Runner的配置文件，GitLab Runner会根据这个文件来执行相应的脚本。</p>
+<div class="note success modern"><p><strong>创建配置文件</strong><br>在项目根目录创建 <code>.gitlab-ci.yml</code> 文件</p>
+</div>
+
+<h3 id="CI-x2F-CD-配置示例"><a href="#CI-x2F-CD-配置示例" class="headerlink" title="CI&#x2F;CD 配置示例"></a>CI&#x2F;CD 配置示例</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">image:</span> <span class="string">node:16.16.0</span>  <span class="comment"># 选用 Node.js 16.16.0 版本</span></span><br><span class="line"></span><br><span class="line"><span class="attr">cache:</span></span><br><span class="line">  <span class="attr">paths:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">node_modules/</span></span><br><span class="line"></span><br><span class="line"><span class="attr">before_script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span> <span class="string">hexo-cli</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line"></span><br><span class="line"><span class="attr">pages:</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">Home</span> <span class="comment"># 自定义标签，后续会用到</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">hexo</span> <span class="string">clean</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="string">hexo</span> <span class="string">generate</span></span><br><span class="line">  <span class="attr">artifacts:</span></span><br><span class="line">    <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">public</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">if:</span> <span class="string">$CI_COMMIT_BRANCH</span> <span class="string">==</span> <span class="string">$CI_DEFAULT_BRANCH</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="🔧-安装和配置GitLab-Runner"><a href="#🔧-安装和配置GitLab-Runner" class="headerlink" title="🔧 安装和配置GitLab Runner"></a>🔧 安装和配置GitLab Runner</h2><div class="note info flat"><p><strong>为什么选择本地Runner？</strong><br>使用本地GitLab Runner可以：</p>
+<ul>
+<li>省去云端成本开销</li>
+<li>减少云端启动容器时间</li>
+<li>更好的控制构建环境</li>
+<li>避免公共Runner的排队等待</li>
+</ul>
+</div>
+
+<h3 id="步骤1-下载GitLab-Runner"><a href="#步骤1-下载GitLab-Runner" class="headerlink" title="步骤1: 下载GitLab Runner"></a>步骤1: 下载GitLab Runner</h3><a class="btn-beautify outline blue" target="_blank" rel="noopener" href="https://docs.gitlab.com/runner/install/" title="GitLab Runner 官方下载"><i class="fas fa-download"></i><span>GitLab Runner 官方下载</span></a>
+
+<a class="btn-beautify outline green" target="_blank" rel="noopener" href="https://docs.gitlab.com/runner/register/?tab=Windows" title="Windows 注册指南"><i class="fas fa-book"></i><span>Windows 注册指南</span></a>
+
+<h3 id="步骤2-注册Runner"><a href="#步骤2-注册Runner" class="headerlink" title="步骤2: 注册Runner"></a>步骤2: 注册Runner</h3><div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">获取注册令牌</button><button type="button" class="tab">执行注册命令</button></div><div class="tab-contents"><div class="tab-item-content active"><ol>
+<li>打开你的GitLab Pages仓库</li>
+<li>进入 <strong>Settings</strong> → <strong>CI&#x2F;CD</strong> → <strong>Runners</strong></li>
+<li>点击 <strong>Create project runner</strong></li>
+<li>输入你在 <code>.gitlab-ci.yml</code> 中设置的tags（如：<code>Home</code>）</li>
+<li>点击 <strong>Create Runner</strong></li>
+</ol></div><div class="tab-item-content"><p>复制页面显示的注册命令到命令行执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gitlab-runner register --url https://gitlab.com --token glrt-xxxxxxxxxx</span><br></pre></td></tr></table></figure>
+
+<div class="note warning no-icon flat"><p>由于Windows下可能双击无反应，需要使用Git Bash、CMD或PowerShell等命令行工具执行</p>
+</div></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
+
+<h3 id="步骤3-配置Runner"><a href="#步骤3-配置Runner" class="headerlink" title="步骤3: 配置Runner"></a>步骤3: 配置Runner</h3><p>找到配置文件 <code>C:\Program Files\Git\config.toml</code>，可能需要手动修改shell为powershell：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[[runners]]</span></span><br><span class="line">  <span class="attr">name</span> = <span class="string">&quot;Home&quot;</span></span><br><span class="line">  <span class="attr">url</span> = <span class="string">&quot;https://gitlab.com&quot;</span></span><br><span class="line">  <span class="attr">pre_clone_script</span> = <span class="string">&quot;git config --global --add safe.directory $&#123;CI_PROJECT_DIR&#125;&quot;</span></span><br><span class="line">  <span class="attr">id</span> = <span class="number">47770241</span></span><br><span class="line">  <span class="attr">token</span> = <span class="string">&quot;glrt-xxxxxxxxxx&quot;</span></span><br><span class="line">  <span class="attr">token_obtained_at</span> = <span class="number">2025</span>-<span class="number">06</span>-<span class="number">10</span>T07:<span class="number">33</span>:<span class="number">07</span>Z</span><br><span class="line">  <span class="attr">token_expires_at</span> = <span class="number">0001</span>-<span class="number">01</span>-<span class="number">01</span>T00:<span class="number">00</span>:<span class="number">00</span>Z</span><br><span class="line">  <span class="attr">executor</span> = <span class="string">&quot;shell&quot;</span></span><br><span class="line">  <span class="attr">shell</span> = <span class="string">&quot;powershell&quot;</span>  <span class="comment"># 重要：设置为powershell</span></span><br><span class="line">  <span class="section">[runners.cache]</span></span><br><span class="line">    <span class="attr">MaxUploadedArchiveSize</span> = <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="步骤4-启动Runner"><a href="#步骤4-启动Runner" class="headerlink" title="步骤4: 启动Runner"></a>步骤4: 启动Runner</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 停止服务</span></span><br><span class="line">gitlab-runner stop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动服务  </span></span><br><span class="line">gitlab-runner start</span><br></pre></td></tr></table></figure>
+
+<h2 id="🚀-部署流程"><a href="#🚀-部署流程" class="headerlink" title="🚀 部署流程"></a>🚀 部署流程</h2><ol>
+<li><strong>推送代码到GitLab</strong></li>
+<li><strong>启动本地Runner服务</strong></li>
+<li><strong>查看构建过程</strong></li>
+<li><strong>访问你的网站</strong>：<code>https://your-username.gitlab.io/</code></li>
+</ol>
+<div class="note success flat"><p><strong>🎉 部署成功！</strong><br>现在你可以通过GitLab提供的域名访问你的博客了</p>
+</div>
+
+<h2 id="🛠️-自动化脚本集合"><a href="#🛠️-自动化脚本集合" class="headerlink" title="🛠️ 自动化脚本集合"></a>🛠️ 自动化脚本集合</h2><div class="note green icon-padding modern"><i class="note-icon fas fa-magic"></i><p><strong>提升效率</strong><br>每次手动执行一大串流程确实繁琐，我编写了一套自动化脚本来快速完成日常操作。</p>
+</div>
+
+<h3 id="📦-脚本下载"><a href="#📦-脚本下载" class="headerlink" title="📦 脚本下载"></a>📦 脚本下载</h3><a class="btn-beautify block center larger" target="_blank" rel="noopener" href="https://gitlab.com/crowforkotlin/page-storage-hexo-script" title="获取完整脚本"><i class="fab fa-gitlab"></i><span>获取完整脚本</span></a>
+
+<h3 id="🔧-使用方法"><a href="#🔧-使用方法" class="headerlink" title="🔧 使用方法"></a>🔧 使用方法</h3><div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">下载和配置</button><button type="button" class="tab">路径配置示例</button><button type="button" class="tab">权限设置</button></div><div class="tab-contents"><div class="tab-item-content active"><ol>
+<li><p><strong>克隆脚本仓库</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://gitlab.com/crowforkotlin/page-storage-hexo-script.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>修改脚本配置</strong></p>
+<ul>
+<li>编辑脚本中的 <code>BLOG_PATH</code> 变量</li>
+<li>根据你的项目路径进行调整</li>
+</ul>
+</li>
+<li><p><strong>配置环境变量</strong></p>
+<ul>
+<li>将脚本目录添加到系统 PATH</li>
+<li>或者直接在脚本目录下使用</li>
+</ul>
+</li>
+<li><p><strong>运行环境</strong></p>
+<ul>
+<li>Git Bash（推荐）</li>
+<li>CMD</li>
+<li>PowerShell</li>
+</ul>
+</li>
+</ol></div><div class="tab-item-content"><p>在每个脚本中找到并修改以下路径：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改为你的博客项目路径</span></span><br><span class="line">BLOG_PATH=<span class="string">&quot;/d/fish/your-username.gitlab.io&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>常见路径格式</strong>：</p>
+<ul>
+<li>Windows: <code>/d/fish/crowforkotlin.gitlab.io</code></li>
+<li>Linux&#x2F;Mac: <code>/home/user/crowforkotlin.gitlab.io</code></li>
+</ul>
+<div class="note warning no-icon flat"><p><strong>注意</strong>：路径中不要包含中文字符，建议使用英文路径</p>
+</div></div><div class="tab-item-content"><p><strong>Linux&#x2F;Mac 用户</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 给脚本添加执行权限</span></span><br><span class="line"><span class="built_in">chmod</span> +x *.sh</span><br></pre></td></tr></table></figure>
+
+<p><strong>Windows 用户</strong>：</p>
+<ul>
+<li>确保已安装 Git Bash</li>
+<li>可能需要以管理员身份运行某些脚本</li>
+<li>部分脚本会自动请求管理员权限</li>
+</ul></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
+
+<div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">🚀 启动Runner</button><button type="button" class="tab">📤 推送到GitLab</button><button type="button" class="tab">🖥️ 本地调试</button><button type="button" class="tab">⚡ 一键部署</button></div><div class="tab-contents"><div class="tab-item-content active"><p><strong>功能</strong>：自动检测权限并启动GitLab Runner服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查管理员权限</span></span><br><span class="line">net session &gt; /dev/null 2&gt;&amp;1</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ $? -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="comment"># 已经是管理员</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;Running with administrator privileges...&quot;</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;Restarting GitLab Runner service...&quot;</span></span><br><span class="line">  </span><br><span class="line">  gitlab-runner stop</span><br><span class="line">  gitlab-runner start</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;Service restart command issued.&quot;</span></span><br><span class="line">  </span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  <span class="comment"># 需要提权</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;Administrator privileges required. Attempting to re-launch with elevation...&quot;</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment"># 使用PowerShell提权重新运行</span></span><br><span class="line">  powershell.exe -Command <span class="string">&quot;Start-Process -FilePath &#x27;bash&#x27; -ArgumentList &#x27;-c \&quot;<span class="subst">$(readlink -f <span class="string">&quot;<span class="variable">$0</span>&quot;</span>)</span>\&quot;&#x27; -Verb RunAs&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><p><strong>功能</strong>：一键提交并推送代码到GitLab仓库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义博客项目路径</span></span><br><span class="line">BLOG_PATH=<span class="string">&quot;/d/fish/crowforkotlin.gitlab.io&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;===================================&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;push blog to git&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;===================================&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Working directory: <span class="variable">$BLOG_PATH</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到博客项目目录</span></span><br><span class="line"><span class="built_in">cd</span> <span class="string">&quot;<span class="variable">$BLOG_PATH</span>&quot;</span></span><br><span class="line"></span><br><span class="line">git add -A</span><br><span class="line">git commit -m <span class="string">&quot;:label: update&quot;</span></span><br><span class="line">git push origin main -f</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><p><strong>功能</strong>：清理、生成并启动本地预览服务器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义博客项目路径</span></span><br><span class="line">BLOG_PATH=<span class="string">&quot;/d/fish/crowforkotlin.gitlab.io&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;===================================&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot; Hexo Blog Workflow Started&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;===================================&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Working directory: <span class="variable">$BLOG_PATH</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到博客项目目录</span></span><br><span class="line"><span class="built_in">cd</span> <span class="string">&quot;<span class="variable">$BLOG_PATH</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[1/3] Cleaning old files...&quot;</span></span><br><span class="line">hexo clean</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[2/3] Generating new static files...&quot;</span></span><br><span class="line">hexo g -f</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[3/3] Starting local server for preview...&quot;</span></span><br><span class="line">hexo server</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;===================================&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot; All tasks completed.&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot; Local server is running at http://localhost:4000&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;===================================&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 让窗口保持打开</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">&quot;Press Enter to exit...&quot;</span></span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><p><strong>功能</strong>：组合脚本，一键完成启动Runner和推送代码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;🚀 Starting automated deployment...&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动GitLab Runner</span></span><br><span class="line">./gitlab-start.sh</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;⏳ Waiting for runner to start...&quot;</span></span><br><span class="line"><span class="built_in">sleep</span> 3</span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送代码到GitLab</span></span><br><span class="line">./gitlab-update.sh</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;✅ Deployment process completed!&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;🌐 Check your GitLab Pages site for updates&quot;</span></span><br></pre></td></tr></table></figure></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
+
+<h2 id="📚-参考资源"><a href="#📚-参考资源" class="headerlink" title="📚 参考资源"></a>📚 参考资源</h2><div class="btn-center">
+<a class="btn-beautify larger" target="_blank" rel="noopener" href="https://gitlab.com/crowforkotlin/page-storage-hexo-script" title="自动化脚本仓库"><i class="fab fa-gitlab"></i><span>自动化脚本仓库</span></a>
+<a class="btn-beautify blue larger" target="_blank" rel="noopener" href="https://docs.gitlab.com/runner/register/?tab=Windows" title="Runner注册指南"><i class="fas fa-book"></i><span>Runner注册指南</span></a>
+<a class="btn-beautify green larger" target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/user/project/pages/" title="GitLab Pages文档"><i class="fas fa-file-alt"></i><span>GitLab Pages文档</span></a>
+</div>
+
+<h2 id="🎯-快捷方式配置与使用"><a href="#🎯-快捷方式配置与使用" class="headerlink" title="🎯 快捷方式配置与使用"></a>🎯 快捷方式配置与使用</h2><div class="note green icon-padding modern"><i class="note-icon fas fa-rocket"></i><p><strong>极简操作</strong><br>通过快捷脚本，参考我已经开源的script仓库，只需要输入 <code>launch</code> 即可自动推送并运行runner，当然你也可以根据需求自定义脚本功能。</p>
+</div>
+
+<h3 id="🚀-一键部署-launch-命令"><a href="#🚀-一键部署-launch-命令" class="headerlink" title="🚀 一键部署 - launch 命令"></a>🚀 一键部署 - launch 命令</h3><p>使用开源的脚本仓库，你可以实现：</p>
+<ul>
+<li><strong>一键启动</strong>：自动运行GitLab Runner</li>
+<li><strong>自动推送</strong>：提交并推送代码到GitLab</li>
+</ul>
+<div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">创建系统快捷方式</button><button type="button" class="tab">uTools启动器配置</button><button type="button" class="tab">自定义脚本</button></div><div class="tab-contents"><div class="tab-item-content active"><p><strong>方法一：Windows快捷方式</strong></p>
+<p>在创建快捷方式时，输入对象的位置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;C:\Program Files\Git\git-bash.exe&quot;</span> -c <span class="string">&quot;launch&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>配置步骤</strong>：</p>
+<ol>
+<li>右键桌面 → 新建 → 快捷方式</li>
+<li>输入上述命令路径</li>
+<li>命名为 “Hexo Deploy” 或其他你喜欢的名称</li>
+<li>完成创建</li>
+</ol>
+<div class="note warning no-icon flat"><p><strong>提醒</strong>：需要先将脚本目录添加到系统环境变量PATH中</p>
+</div></div><div class="tab-item-content"><p><strong>方法二：uTools工具（推荐）</strong></p>
+<div class="note primary flat"><p><strong>为什么选择uTools？</strong></p>
+<ul>
+<li>全局快速启动</li>
+<li>无需记忆复杂路径</li>
+<li>支持关键词搜索</li>
+<li>界面美观易用</li>
+</ul>
+</div>
+
+<p><strong>配置步骤</strong>：</p>
+<ol>
+<li>下载并安装 <a target="_blank" rel="noopener" href="https://u.tools/">uTools</a></li>
+<li>打开uTools设置</li>
+<li>进入 <strong>设置</strong> → <strong>文件启动选项</strong></li>
+<li>将launch脚本快捷方式拖入启动选项</li>
+<li>设置关键词（如：<code>launch</code>、<code>hexo</code>、<code>deploy</code>）</li>
+</ol>
+<p><strong>使用方法</strong>：</p>
+<ul>
+<li>按下 <code>Alt + Space</code> 唤起uTools</li>
+<li>输入 <code>launch</code> 或设置的关键词</li>
+<li>回车执行，完成一键部署</li>
+</ul>
+<div class="note success no-icon flat"><p><strong>效果</strong>：更新整个Hexo博客并推送更新到GitLab Pages，只需要输入一个关键词！</p>
+</div></div><div class="tab-item-content"><p><strong>方法三：自定义launch脚本</strong></p>
+<p>你可以根据需求修改launch脚本的功能：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># launch.sh - 自定义一键部署脚本</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;🚀 Starting Hexo deployment workflow...&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 可选：添加预处理步骤</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;📝 Checking for new posts...&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动GitLab Runner</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;🔧 Starting GitLab Runner...&quot;</span></span><br><span class="line">./gitlab-start.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 等待Runner启动</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;⏳ Waiting for runner to initialize...&quot;</span></span><br><span class="line"><span class="built_in">sleep</span> 5</span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送代码</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;📤 Pushing to GitLab...&quot;</span></span><br><span class="line">./gitlab-update.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可选：打开浏览器预览</span></span><br><span class="line"><span class="comment"># echo &quot;🌐 Opening browser preview...&quot;</span></span><br><span class="line"><span class="comment"># start https://your-username.gitlab.io</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;✅ Deployment completed successfully!&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;🎉 Your blog is now updated!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 保持窗口打开以查看结果</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">&quot;Press Enter to exit...&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>自定义选项</strong>：</p>
+<ul>
+<li>添加构建前检查</li>
+<li>集成图片压缩</li>
+<li>自动打开浏览器预览</li>
+<li>发送部署完成通知</li>
+</ul></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
+
+<h3 id="🛠️-环境变量配置"><a href="#🛠️-环境变量配置" class="headerlink" title="🛠️ 环境变量配置"></a>🛠️ 环境变量配置</h3><div class="note info modern"><p><strong>环境变量设置</strong><br>为了在任意位置使用脚本命令，需要配置系统环境变量</p>
+</div>
+
+<p><strong>Windows 配置步骤</strong>：</p>
+<ol>
+<li>右键 “此电脑” → 属性</li>
+<li>高级系统设置 → 环境变量</li>
+<li>在系统变量中找到 “Path”</li>
+<li>添加脚本所在目录路径</li>
+<li>确定保存</li>
+</ol>
+<p><strong>验证配置</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在任意目录打开命令行，输入：</span></span><br><span class="line">launch</span><br><span class="line"><span class="comment"># 如果能正常执行，说明配置成功</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="📋-常用命令速查"><a href="#📋-常用命令速查" class="headerlink" title="📋 常用命令速查"></a>📋 常用命令速查</h2><div class="btn-center">
+<a class="btn-beautify outline green" href="#" title="启动Runner"><i class="fas fa-play"></i><span>启动Runner</span></a>
+<a class="btn-beautify outline red" href="#" title="停止Runner"><i class="fas fa-stop"></i><span>停止Runner</span></a>
+<a class="btn-beautify outline blue" href="#" title="推送代码"><i class="fas fa-upload"></i><span>推送代码</span></a>
+<a class="btn-beautify outline purple" href="#" title="本地预览"><i class="fas fa-eye"></i><span>本地预览</span></a>
+</div>
+
+<details class="toggle" ><summary class="toggle-button" style="">完整命令列表</summary><div class="toggle-content"><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GitLab Runner 管理</span></span><br><span class="line">gitlab-runner start    <span class="comment"># 启动服务</span></span><br><span class="line">gitlab-runner stop     <span class="comment"># 停止服务</span></span><br><span class="line">gitlab-runner status   <span class="comment"># 查看状态</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Git 操作</span></span><br><span class="line">git add -A                    <span class="comment"># 添加所有文件</span></span><br><span class="line">git commit -m <span class="string">&quot;message&quot;</span>       <span class="comment"># 提交变更</span></span><br><span class="line">git push origin main -f       <span class="comment"># 强制推送到主分支</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Hexo 操作</span></span><br><span class="line">hexo clean      <span class="comment"># 清理缓存</span></span><br><span class="line">hexo generate   <span class="comment"># 生成静态文件</span></span><br><span class="line">hexo server     <span class="comment"># 启动本地服务器</span></span><br><span class="line">hexo deploy     <span class="comment"># 部署到远程</span></span><br></pre></td></tr></table></figure>
+</div></details>
+
+<hr>
+<h2 id="💡-故障排除"><a href="#💡-故障排除" class="headerlink" title="💡 故障排除"></a>💡 故障排除</h2><div class="note danger modern"><p><strong>常见问题解决方案</strong></p>
+</div>
+
+<div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">Runner无法启动</button><button type="button" class="tab">构建失败</button><button type="button" class="tab">脚本权限问题</button></div><div class="tab-contents"><div class="tab-item-content active"><p><strong>问题现象</strong>：Runner服务无法正常启动</p>
+<p><strong>解决方案</strong>：</p>
+<ol>
+<li>检查管理员权限</li>
+<li>确认Runner已正确注册</li>
+<li>检查配置文件路径</li>
+<li>重新安装Runner服务</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重新安装服务</span></span><br><span class="line">gitlab-runner uninstall</span><br><span class="line">gitlab-runner install</span><br><span class="line">gitlab-runner start</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><p><strong>问题现象</strong>：CI&#x2F;CD流水线构建失败</p>
+<p><strong>解决方案</strong>：</p>
+<ol>
+<li>检查 <code>.gitlab-ci.yml</code> 语法</li>
+<li>确认Node.js版本兼容性</li>
+<li>检查依赖包安装</li>
+<li>查看详细构建日志</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 本地测试构建过程</span></span><br><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><p><strong>问题现象</strong>：脚本无法执行或权限不足</p>
+<p><strong>解决方案</strong>：</p>
+<ol>
+<li>以管理员身份运行</li>
+<li>修改脚本执行权限</li>
+<li>检查路径配置</li>
+<li>确认Git Bash环境</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Linux/Mac 添加执行权限</span></span><br><span class="line"><span class="built_in">chmod</span> +x script-name.sh</span><br></pre></td></tr></table></figure></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
+
+<h2 id="🎉-部署成功检查"><a href="#🎉-部署成功检查" class="headerlink" title="🎉 部署成功检查"></a>🎉 部署成功检查</h2><div class="note success icon-padding modern"><i class="note-icon fas fa-check-circle"></i><p><strong>部署完成后的验证步骤</strong></p>
+<ol>
+<li>✅ GitLab Pages构建成功</li>
+<li>✅ 网站可正常访问</li>
+<li>✅ 样式和资源加载正常</li>
+<li>✅ 文章内容显示正确</li>
+</ol>
+</div>
+
+<div class="note success icon-padding modern"><i class="note-icon fas fa-lightbulb"></i><p><strong>进阶小贴士</strong></p>
+<ul>
+<li>脚本路径需要根据实际情况修改</li>
+<li>建议将常用脚本添加到系统环境变量中</li>
+<li>可以根据需求自定义脚本功能</li>
+<li>记得定期检查GitLab Runner的运行状态</li>
+<li>建议定期备份重要的配置文件</li>
+<li>可以设置定时任务自动执行部署脚本</li>
+</ul>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://wuya.click">crowforkotlin</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://crowforkotlin.github.io/2025/06/28/HEXO/02Hexo%E9%85%8D%E7%BD%AE%E8%84%9A%E6%9C%AC%E5%8F%91%E5%B8%83%E6%9B%B4%E6%96%B0%E5%92%8C%E8%B0%83%E8%AF%95/">https://crowforkotlin.github.io/2025/06/28/HEXO/02Hexo%E9%85%8D%E7%BD%AE%E8%84%9A%E6%9C%AC%E5%8F%91%E5%B8%83%E6%9B%B4%E6%96%B0%E5%92%8C%E8%B0%83%E8%AF%95/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://crowforkotlin.github.io" target="_blank">crowforkotlin</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Hexo/">Hexo</a></div><div class="post-share"><div class="social-share" data-image="/img/cover_bg2.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/02/Android/Adb%20shell%20%E5%88%86%E9%85%8D%E4%BC%AA%E7%BB%88%E7%AB%AF/" title="Adb Shell 分配伪终端解决方案"><img class="cover" src="/img/cover_bg3.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Adb Shell 分配伪终端解决方案</div></div><div class="info-2"><div class="info-item-1">解决adb shell执行脚本时权限拒绝问题的伪终端分配方案</div></div></div></a><a class="pagination-related" href="/2025/06/28/HEXO/01Hexo%E6%90%AD%E5%BB%BA%E5%B9%B6%E4%BD%BF%E7%94%A8Butterfly%E4%B8%BB%E9%A2%98/" title="① Hexo搭建并使用Butterfly主题"><img class="cover" src="/img/cover_bg1.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">① Hexo搭建并使用Butterfly主题</div></div><div class="info-2"><div class="info-item-1">详细介绍如何从零开始搭建Hexo博客并配置美观的Butterfly主题</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/06/28/HEXO/01Hexo%E6%90%AD%E5%BB%BA%E5%B9%B6%E4%BD%BF%E7%94%A8Butterfly%E4%B8%BB%E9%A2%98/" title="① Hexo搭建并使用Butterfly主题"><img class="cover" src="/img/cover_bg1.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-28</div><div class="info-item-2">① Hexo搭建并使用Butterfly主题</div></div><div class="info-2"><div class="info-item-1">详细介绍如何从零开始搭建Hexo博客并配置美观的Butterfly主题</div></div></div></a><a class="pagination-related" href="/2025/12/18/HEXO/03Hexo%20QuickDepoly/" title="③ Hexo QuickDepoly.sh"><img class="cover" src="/img/cover_bg4.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-18</div><div class="info-item-2">③ Hexo QuickDepoly.sh</div></div><div class="info-2"><div class="info-item-1">快速部署hexo并推送内容到github</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8C%90-%E4%BB%80%E4%B9%88%E6%98%AFGitLab-Pages%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">🌐 什么是GitLab Pages？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%93%9D-%E4%BB%93%E5%BA%93%E5%91%BD%E5%90%8D%E8%A7%84%E5%88%99"><span class="toc-number">1.1.</span> <span class="toc-text">📝 仓库命名规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9A%99%EF%B8%8F-%E9%85%8D%E7%BD%AE%E7%AB%99%E7%82%B9URL"><span class="toc-number">1.2.</span> <span class="toc-text">⚙️ 配置站点URL</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F-%E4%BB%80%E4%B9%88%E6%98%AFGitLab-Runner%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">🏃‍♂️ 什么是GitLab Runner？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%84-%E9%85%8D%E7%BD%AECI-x2F-CD%E6%96%87%E4%BB%B6"><span class="toc-number">3.</span> <span class="toc-text">📄 配置CI&#x2F;CD文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CI-x2F-CD-%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="toc-number">3.1.</span> <span class="toc-text">CI&#x2F;CD 配置示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%A7-%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AEGitLab-Runner"><span class="toc-number">4.</span> <span class="toc-text">🔧 安装和配置GitLab Runner</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A41-%E4%B8%8B%E8%BD%BDGitLab-Runner"><span class="toc-number">4.1.</span> <span class="toc-text">步骤1: 下载GitLab Runner</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A42-%E6%B3%A8%E5%86%8CRunner"><span class="toc-number">4.2.</span> <span class="toc-text">步骤2: 注册Runner</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A43-%E9%85%8D%E7%BD%AERunner"><span class="toc-number">4.3.</span> <span class="toc-text">步骤3: 配置Runner</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A44-%E5%90%AF%E5%8A%A8Runner"><span class="toc-number">4.4.</span> <span class="toc-text">步骤4: 启动Runner</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9A%80-%E9%83%A8%E7%BD%B2%E6%B5%81%E7%A8%8B"><span class="toc-number">5.</span> <span class="toc-text">🚀 部署流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9B%A0%EF%B8%8F-%E8%87%AA%E5%8A%A8%E5%8C%96%E8%84%9A%E6%9C%AC%E9%9B%86%E5%90%88"><span class="toc-number">6.</span> <span class="toc-text">🛠️ 自动化脚本集合</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%93%A6-%E8%84%9A%E6%9C%AC%E4%B8%8B%E8%BD%BD"><span class="toc-number">6.1.</span> <span class="toc-text">📦 脚本下载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%94%A7-%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-number">6.2.</span> <span class="toc-text">🔧 使用方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%9A-%E5%8F%82%E8%80%83%E8%B5%84%E6%BA%90"><span class="toc-number">7.</span> <span class="toc-text">📚 参考资源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%AF-%E5%BF%AB%E6%8D%B7%E6%96%B9%E5%BC%8F%E9%85%8D%E7%BD%AE%E4%B8%8E%E4%BD%BF%E7%94%A8"><span class="toc-number">8.</span> <span class="toc-text">🎯 快捷方式配置与使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%9A%80-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2-launch-%E5%91%BD%E4%BB%A4"><span class="toc-number">8.1.</span> <span class="toc-text">🚀 一键部署 - launch 命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%9B%A0%EF%B8%8F-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE"><span class="toc-number">8.2.</span> <span class="toc-text">🛠️ 环境变量配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%8B-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%80%9F%E6%9F%A5"><span class="toc-number">9.</span> <span class="toc-text">📋 常用命令速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%92%A1-%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="toc-number">10.</span> <span class="toc-text">💡 故障排除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%89-%E9%83%A8%E7%BD%B2%E6%88%90%E5%8A%9F%E6%A3%80%E6%9F%A5"><span class="toc-number">11.</span> <span class="toc-text">🎉 部署成功检查</span></a></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url(/img/home_top.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2023 - 2026 By crowforkotlin</span></div><div class="footer_custom_text">欢迎到此一游~</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: 'Ov23liNYzLaBrOTZBvuB',
+      clientSecret: '872025f8de5446e9dfc8acea0dcce2d0a36daac8',
+      repo: 'crowforkotlin-blog-comment',
+      owner: 'crowforkotlin',
+      admin: ['crowforkotlin'],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || 'adbfccc575c498f85d330ec8f778cd2c'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script src="/js/crystal-cursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="177" alpha="0.7" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="77" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

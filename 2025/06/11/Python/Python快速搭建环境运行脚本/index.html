@@ -1,0 +1,481 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Python环境快速搭建指南 | crowforkotlin</title><meta name="author" content="crowforkotlin"><meta name="copyright" content="crowforkotlin"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Python开发环境快速搭建教程，涵盖安装配置、虚拟环境管理、依赖管理等实用技能"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Python环境快速搭建指南",
+  "url": "https://crowforkotlin.github.io/2025/06/11/Python/Python%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC/",
+  "image": "https://crowforkotlin.github.io/img/cover_bg4.webp",
+  "datePublished": "2025-06-11T05:30:00.000Z",
+  "dateModified": "2026-01-01T08:00:33.490Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "crowforkotlin",
+      "url": "https://wuya.click"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/avatar_round.webp"><link rel="canonical" href="https://crowforkotlin.github.io/2025/06/11/Python/Python%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200,"highlightFullpage":true,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Python环境快速搭建指南',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/cursor.css"><link rel="styleisheet" href="/self/Kimbiedark.css"><meta name="generator" content="Hexo 6.2.0"></head><body><div id="web_bg" style="background-image: url(/img/home_top.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">46</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">23</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/android"><i class="fa-fw fab fa-android"></i><span> 安卓</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 相关链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: linear-gradient(20deg, #00000000, #00000000);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">crowforkotlin</span></a><a class="nav-page-title" href="/"><span class="site-name">Python环境快速搭建指南</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/android"><i class="fa-fw fab fa-android"></i><span> 安卓</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 相关链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Python环境快速搭建指南</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-06-11T05:30:00.000Z" title="发表于 2025-06-11 13:30:00">2025-06-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-01-01T08:00:33.490Z" title="更新于 2026-01-01 16:00:33">2026-01-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Python/">Python</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">1.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/2025/06/11/Python/Python%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div class="note modern"><p>🎯 <strong>学习目标</strong>：掌握Python开发环境的搭建和虚拟环境管理，为Python项目开发打下坚实基础</p>
+</div>
+
+<h2 id="📥-Python安装"><a href="#📥-Python安装" class="headerlink" title="📥 Python安装"></a>📥 Python安装</h2><h3 id="🌐-下载与安装"><a href="#🌐-下载与安装" class="headerlink" title="🌐 下载与安装"></a>🌐 下载与安装</h3><div class="note info icon-padding flat"><i class="note-icon fas fa-download"></i><p><strong>官方下载地址</strong>：<a target="_blank" rel="noopener" href="https://www.python.org/downloads/">Python官方网站</a><br><strong>推荐版本</strong>：Python 3.11+ (具备更好的性能和特性)</p>
+</div>
+
+<div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">🪟 Windows 安装</button><button type="button" class="tab">🐧 Linux 安装</button><button type="button" class="tab">🍎 macOS 安装</button></div><div class="tab-contents"><div class="tab-item-content active"><h3 id="Windows-安装步骤"><a href="#Windows-安装步骤" class="headerlink" title="Windows 安装步骤"></a>Windows 安装步骤</h3><ol>
+<li><p><strong>下载安装包</strong></p>
+<ul>
+<li>访问Python官网下载最新版本</li>
+<li>选择适合系统架构的安装包（32位&#x2F;64位）</li>
+</ul>
+</li>
+<li><p><strong>安装配置</strong></p>
+<div class="note warning icon-padding flat"><i class="note-icon fas fa-exclamation-triangle"></i><p><strong>重要</strong>：安装时务必勾选以下选项</p>
+</div>
+
+<ul>
+<li>✅ <strong>Add Python to PATH</strong> (添加到环境变量)</li>
+<li>✅ <strong>Install pip</strong> (安装包管理器)</li>
+<li>🔧 选择自定义安装路径（可选）</li>
+</ul>
+</li>
+<li><p><strong>环境变量验证</strong></p>
+<p>确认以下路径已添加到系统环境变量 <code>Path</code> 中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D:\program\Python311\</span><br><span class="line">D:\program\Python311\Scripts\</span><br></pre></td></tr></table></figure></li>
+</ol>
+<div class="note success icon-padding flat"><i class="note-icon fas fa-check-circle"></i><p><strong>验证安装</strong>：打开命令行输入 <code>python --version</code> 检查安装是否成功</p>
+</div></div><div class="tab-item-content"><h3 id="Ubuntu-x2F-Debian-系统"><a href="#Ubuntu-x2F-Debian-系统" class="headerlink" title="Ubuntu&#x2F;Debian 系统"></a>Ubuntu&#x2F;Debian 系统</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 更新包管理器</span></span><br><span class="line">sudo apt update</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装Python</span></span><br><span class="line">sudo apt install python3 python3-pip python3-venv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证安装</span></span><br><span class="line">python3 --version</span><br><span class="line">pip3 --version</span><br></pre></td></tr></table></figure>
+
+<h3 id="CentOS-x2F-RHEL-系统"><a href="#CentOS-x2F-RHEL-系统" class="headerlink" title="CentOS&#x2F;RHEL 系统"></a>CentOS&#x2F;RHEL 系统</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装Python</span></span><br><span class="line">sudo yum install python3 python3-pip</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或使用dnf (较新版本)</span></span><br><span class="line">sudo dnf install python3 python3-pip</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证安装</span></span><br><span class="line">python3 --version</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><h3 id="使用-Homebrew（推荐）"><a href="#使用-Homebrew（推荐）" class="headerlink" title="使用 Homebrew（推荐）"></a>使用 Homebrew（推荐）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装Homebrew (如果未安装)</span></span><br><span class="line">/bin/bash -c <span class="string">&quot;<span class="subst">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装Python</span></span><br><span class="line">brew install python</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证安装</span></span><br><span class="line">python3 --version</span><br><span class="line">pip3 --version</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用官方安装包"><a href="#使用官方安装包" class="headerlink" title="使用官方安装包"></a>使用官方安装包</h3><ul>
+<li>下载 macOS 专用的 <code>.pkg</code> 安装包</li>
+<li>双击安装并按提示操作</li>
+</ul></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
+
+<h2 id="🚀-虚拟环境管理"><a href="#🚀-虚拟环境管理" class="headerlink" title="🚀 虚拟环境管理"></a>🚀 虚拟环境管理</h2><div class="note blue icon-padding modern"><i class="note-icon fas fa-info-circle"></i><p><strong>为什么需要虚拟环境？</strong><br>虚拟环境为每个项目创建独立的Python运行环境，避免依赖冲突，便于项目管理和部署。</p>
+</div>
+
+<h3 id="📁-项目初始化"><a href="#📁-项目初始化" class="headerlink" title="📁 项目初始化"></a>📁 项目初始化</h3><div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">📂 创建项目</button><button type="button" class="tab">🌍 创建虚拟环境</button><button type="button" class="tab">⚡ 激活环境</button></div><div class="tab-contents"><div class="tab-item-content active"><p><strong>创建项目目录</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> <span class="built_in">test</span></span><br><span class="line"><span class="built_in">cd</span> <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<div class="note green icon-padding flat"><i class="note-icon fas fa-folder"></i><p><strong>建议</strong>：使用有意义的项目名称，如 <code>my-python-project</code></p>
+</div></div><div class="tab-item-content"><p><strong>创建虚拟环境</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m venv venv</span><br></pre></td></tr></table></figure>
+
+<div class="note purple icon-padding flat"><i class="note-icon fas fa-magic"></i><p><strong>命令解析</strong>：<code>venv</code> 是Python内置的虚拟环境模块，第二个 <code>venv</code> 是环境目录名</p>
+</div></div><div class="tab-item-content"><p><strong>激活虚拟环境</strong></p>
+<p><strong>Windows 系统：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">venv\Scripts\activate</span><br></pre></td></tr></table></figure>
+
+<p><strong>Linux&#x2F;macOS 系统：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> venv/bin/activate</span><br></pre></td></tr></table></figure>
+
+<div class="note success icon-padding flat"><i class="note-icon fas fa-check"></i><p><strong>成功标志</strong>：激活后命令行前会显示 <code>(venv)</code> 标识</p>
+</div></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
+
+<h3 id="🔧-环境配置"><a href="#🔧-环境配置" class="headerlink" title="🔧 环境配置"></a>🔧 环境配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 更新pip到最新版本</span></span><br><span class="line">python -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
+
+<div class="note warning icon-padding flat"><i class="note-icon fas fa-exclamation-triangle"></i><p><strong>注意</strong>：建议每次创建新环境后都更新pip，确保使用最新功能</p>
+</div>
+
+<h2 id="📦-依赖包管理"><a href="#📦-依赖包管理" class="headerlink" title="📦 依赖包管理"></a>📦 依赖包管理</h2><h3 id="🔽-安装依赖包"><a href="#🔽-安装依赖包" class="headerlink" title="🔽 安装依赖包"></a>🔽 安装依赖包</h3><div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">📥 单个安装</button><button type="button" class="tab">📄 批量管理</button><button type="button" class="tab">🔍 查看与卸载</button></div><div class="tab-contents"><div class="tab-item-content active"><p><strong>安装单个包</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install package_name</span><br></pre></td></tr></table></figure>
+
+<p><strong>常用包安装示例：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># HTTP请求库</span></span><br><span class="line">pip install requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据分析库</span></span><br><span class="line">pip install numpy pandas</span><br><span class="line"></span><br><span class="line"><span class="comment"># Web框架</span></span><br><span class="line">pip install flask django</span><br><span class="line"></span><br><span class="line"><span class="comment"># 机器学习</span></span><br><span class="line">pip install scikit-learn tensorflow</span><br></pre></td></tr></table></figure>
+
+<div class="note blue icon-padding flat"><i class="note-icon fas fa-lightbulb"></i><p><strong>提示</strong>：可以指定版本 <code>pip install package_name==1.2.3</code></p>
+</div></div><div class="tab-item-content"><p><strong>生成依赖文件</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip freeze &gt; requirements.txt</span><br></pre></td></tr></table></figure>
+
+<p><strong>安装依赖文件</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -r requirements.txt</span><br></pre></td></tr></table></figure>
+
+<div class="note green icon-padding flat"><i class="note-icon fas fa-file-alt"></i><p><strong>最佳实践</strong>：每次修改依赖后都要更新 <code>requirements.txt</code></p>
+</div></div><div class="tab-item-content"><p><strong>查看已安装的包</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip list</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看包详细信息</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip show package_name</span><br></pre></td></tr></table></figure>
+
+<p><strong>卸载包</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip uninstall package_name</span><br></pre></td></tr></table></figure>
+
+<div class="note red icon-padding flat"><i class="note-icon fas fa-trash"></i><p><strong>注意</strong>：卸载包时会询问确认，使用 <code>-y</code> 参数可跳过确认</p>
+</div></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
+
+<h2 id="🔄-环境切换与管理"><a href="#🔄-环境切换与管理" class="headerlink" title="🔄 环境切换与管理"></a>🔄 环境切换与管理</h2><h3 id="❌-退出虚拟环境"><a href="#❌-退出虚拟环境" class="headerlink" title="❌ 退出虚拟环境"></a>❌ 退出虚拟环境</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deactivate</span><br></pre></td></tr></table></figure>
+
+<div class="note info icon-padding flat"><i class="note-icon fas fa-sign-out-alt"></i><p>退出后回到全局Python环境，命令行前的 <code>(venv)</code> 标识会消失</p>
+</div>
+
+<h3 id="🗑️-删除虚拟环境"><a href="#🗑️-删除虚拟环境" class="headerlink" title="🗑️ 删除虚拟环境"></a>🗑️ 删除虚拟环境</h3><p><strong>Windows 系统：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rmdir</span> /s venv</span><br></pre></td></tr></table></figure>
+
+<p><strong>Linux&#x2F;macOS 系统：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf venv</span><br></pre></td></tr></table></figure>
+
+<div class="note danger icon-padding flat"><i class="note-icon fas fa-exclamation-circle"></i><p><strong>警告</strong>：删除虚拟环境会丢失所有已安装的包，请确保已备份 <code>requirements.txt</code></p>
+</div>
+
+<h2 id="�-快速参考"><a href="#�-快速参考" class="headerlink" title="� 快速参考"></a>� 快速参考</h2><h3 id="🔧-常用命令速查表"><a href="#🔧-常用命令速查表" class="headerlink" title="🔧 常用命令速查表"></a>🔧 常用命令速查表</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>python -m venv venv</code></td>
+<td>🆕 创建虚拟环境</td>
+</tr>
+<tr>
+<td><code>venv\Scripts\activate</code></td>
+<td>▶️ 激活环境(Windows)</td>
+</tr>
+<tr>
+<td><code>source venv/bin/activate</code></td>
+<td>▶️ 激活环境(Linux&#x2F;Mac)</td>
+</tr>
+<tr>
+<td><code>deactivate</code></td>
+<td>⏹️ 退出虚拟环境</td>
+</tr>
+<tr>
+<td><code>pip install package</code></td>
+<td>📥 安装包</td>
+</tr>
+<tr>
+<td><code>pip freeze &gt; requirements.txt</code></td>
+<td>📄 导出依赖列表</td>
+</tr>
+<tr>
+<td><code>pip install -r requirements.txt</code></td>
+<td>📦 安装依赖列表</td>
+</tr>
+<tr>
+<td><code>pip list</code></td>
+<td>📋 查看已安装包</td>
+</tr>
+<tr>
+<td><code>pip uninstall package</code></td>
+<td>🗑️ 卸载包</td>
+</tr>
+</tbody></table>
+<h3 id="🎯-最佳实践建议"><a href="#🎯-最佳实践建议" class="headerlink" title="🎯 最佳实践建议"></a>🎯 最佳实践建议</h3><div class="note green icon-padding modern"><i class="note-icon fas fa-lightbulb"></i><p><strong>项目隔离</strong>：每个项目使用独立虚拟环境，避免依赖冲突</p>
+</div>
+
+<div class="note blue icon-padding modern"><i class="note-icon fas fa-sync"></i><p><strong>及时更新</strong>：新增依赖后及时更新 <code>requirements.txt</code>，保持团队环境同步</p>
+</div>
+
+<div class="note purple icon-padding modern"><i class="note-icon fas fa-code-branch"></i><p><strong>版本控制</strong>：将 <code>requirements.txt</code> 纳入Git管理，但排除 <code>venv/</code> 目录</p>
+</div>
+
+<h3 id="📝-gitignore-配置"><a href="#📝-gitignore-配置" class="headerlink" title="📝 .gitignore 配置"></a>📝 .gitignore 配置</h3><div class="note orange icon-padding flat"><i class="note-icon fab fa-git-alt"></i><p><strong>推荐配置</strong>：在项目根目录创建 <code>.gitignore</code> 文件</p>
+</div>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"># Python 虚拟环境</span><br><span class="line">venv/</span><br><span class="line">env/</span><br><span class="line"></span><br><span class="line"># Python 缓存文件</span><br><span class="line">__pycache__/</span><br><span class="line">*.pyc</span><br><span class="line">*.pyo</span><br><span class="line">*.pyd</span><br><span class="line"></span><br><span class="line"># IDE 配置文件</span><br><span class="line">.vscode/</span><br><span class="line">.idea/</span><br><span class="line"></span><br><span class="line"># 系统文件</span><br><span class="line">.DS_Store</span><br><span class="line">Thumbs.db</span><br></pre></td></tr></table></figure>
+
+<h2 id="🔧-故障排除"><a href="#🔧-故障排除" class="headerlink" title="🔧 故障排除"></a>🔧 故障排除</h2><div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">❗ 常见问题</button><button type="button" class="tab">✅ 安装验证</button><button type="button" class="tab">� 性能优化</button></div><div class="tab-contents"><div class="tab-item-content active"><div class="note danger icon-padding flat"><i class="note-icon fas fa-bug"></i><p><strong>问题1</strong>: <code>python</code> 命令不识别<br><strong>解决方案</strong>: 检查环境变量Path配置，确保Python安装路径已添加</p>
+</div>
+
+<div class="note danger icon-padding flat"><i class="note-icon fas fa-bug"></i><p><strong>问题2</strong>: <code>pip</code> 命令不识别<br><strong>解决方案</strong>: 重新安装Python，确保勾选了”Install pip”选项</p>
+</div>
+
+<div class="note danger icon-padding flat"><i class="note-icon fas fa-bug"></i><p><strong>问题3</strong>: 虚拟环境激活失败<br><strong>解决方案</strong>: 检查路径分隔符，Windows使用反斜杠 <code>\</code>，Linux&#x2F;Mac使用正斜杠 <code>/</code></p>
+</div>
+
+<div class="note danger icon-padding flat"><i class="note-icon fas fa-bug"></i><p><strong>问题4</strong>: 包安装速度慢<br><strong>解决方案</strong>: 使用国内镜像源加速下载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple package_name</span><br></pre></td></tr></table></figure></div></div><div class="tab-item-content"><p><strong>验证Python安装</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python --version</span><br><span class="line"><span class="comment"># 或</span></span><br><span class="line">python -V</span><br></pre></td></tr></table></figure>
+
+<p><strong>验证pip安装</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip --version</span><br><span class="line"><span class="comment"># 或</span></span><br><span class="line">pip -V</span><br></pre></td></tr></table></figure>
+
+<p><strong>测试虚拟环境</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在虚拟环境中</span></span><br><span class="line">python -c <span class="string">&quot;import sys; print(sys.executable)&quot;</span></span><br></pre></td></tr></table></figure>
+
+<div class="note success icon-padding flat"><i class="note-icon fas fa-check-circle"></i><p>正确配置后应显示虚拟环境中的Python路径</p>
+</div></div><div class="tab-item-content"><p><strong>配置pip镜像源（永久）</strong></p>
+<p>创建pip配置文件：</p>
+<p><strong>Windows</strong>: <code>%APPDATA%\pip\pip.ini</code><br><strong>Linux&#x2F;Mac</strong>: <code>~/.pip/pip.conf</code></p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[global]</span></span><br><span class="line"><span class="attr">index-url</span> = https://pypi.tuna.tsinghua.edu.cn/simple</span><br><span class="line"><span class="attr">trusted-host</span> = pypi.tuna.tsinghua.edu.cn</span><br></pre></td></tr></table></figure>
+
+<p><strong>常用国内镜像源</strong></p>
+<ul>
+<li>清华大学：<code>https://pypi.tuna.tsinghua.edu.cn/simple</code></li>
+<li>阿里云：<code>https://mirrors.aliyun.com/pypi/simple</code></li>
+<li>豆瓣：<code>https://pypi.douban.com/simple</code></li>
+</ul></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
+
+<h2 id="🎉-总结"><a href="#🎉-总结" class="headerlink" title="🎉 总结"></a>🎉 总结</h2><div class="note success icon-padding modern"><i class="note-icon fas fa-graduation-cap"></i><p><strong>恭喜！</strong> 你已经掌握了Python环境搭建的核心技能</p>
+</div>
+
+
+<h3 id="�💡-学习路径建议"><a href="#�💡-学习路径建议" class="headerlink" title="�💡 学习路径建议"></a>�💡 学习路径建议</h3><div class="note blue icon-padding flat"><i class="note-icon fas fa-route"></i><p><strong>初学者路径</strong>：基础语法 → 标准库 → 第三方库 → 实战项目</p>
+</div>
+
+<div class="note purple icon-padding flat"><i class="note-icon fas fa-rocket"></i><p><strong>进阶路径</strong>：Web开发 &#x2F; 数据分析 &#x2F; 机器学习 &#x2F; 自动化运维</p>
+</div>
+
+<hr>
+<div class="note pink icon-padding modern"><i class="note-icon fas fa-heart"></i><p><strong>小贴士</strong>：虚拟环境是Python开发的最佳实践，熟练掌握后将大大提升开发效率！</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://wuya.click">crowforkotlin</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://crowforkotlin.github.io/2025/06/11/Python/Python%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC/">https://crowforkotlin.github.io/2025/06/11/Python/Python%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://crowforkotlin.github.io" target="_blank">crowforkotlin</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python/">Python</a></div><div class="post-share"><div class="social-share" data-image="/img/cover_bg4.webp" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/06/11/%E6%8A%93%E5%8C%85/TCP%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE/" title="📡 TCP原始数据包抓取详解"><img class="cover" src="/img/cover_bg1.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">📡 TCP原始数据包抓取详解</div></div><div class="info-2"><div class="info-item-1">使用tcpdump抓取TCP原始数据包</div></div></div></a><a class="pagination-related" href="/2025/06/11/Android/Avd%20Root/" title="📱 Android虚拟机Root教程"><img class="cover" src="/img/cover_bg3.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">📱 Android虚拟机Root教程</div></div><div class="info-2"><div class="info-item-1">使用RootAVD工具对Android虚拟机进行Root的详细教程</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%A5-Python%E5%AE%89%E8%A3%85"><span class="toc-number">1.</span> <span class="toc-text">📥 Python安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%90-%E4%B8%8B%E8%BD%BD%E4%B8%8E%E5%AE%89%E8%A3%85"><span class="toc-number">1.1.</span> <span class="toc-text">🌐 下载与安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows-%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.2.</span> <span class="toc-text">Windows 安装步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ubuntu-x2F-Debian-%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.3.</span> <span class="toc-text">Ubuntu&#x2F;Debian 系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CentOS-x2F-RHEL-%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.4.</span> <span class="toc-text">CentOS&#x2F;RHEL 系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Homebrew%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="toc-number">1.5.</span> <span class="toc-text">使用 Homebrew（推荐）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%AE%98%E6%96%B9%E5%AE%89%E8%A3%85%E5%8C%85"><span class="toc-number">1.6.</span> <span class="toc-text">使用官方安装包</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9A%80-%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83%E7%AE%A1%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">🚀 虚拟环境管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%93%81-%E9%A1%B9%E7%9B%AE%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">2.1.</span> <span class="toc-text">📁 项目初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%94%A7-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-number">2.2.</span> <span class="toc-text">🔧 环境配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%A6-%E4%BE%9D%E8%B5%96%E5%8C%85%E7%AE%A1%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">📦 依赖包管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%94%BD-%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96%E5%8C%85"><span class="toc-number">3.1.</span> <span class="toc-text">🔽 安装依赖包</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%84-%E7%8E%AF%E5%A2%83%E5%88%87%E6%8D%A2%E4%B8%8E%E7%AE%A1%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">🔄 环境切换与管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9D%8C-%E9%80%80%E5%87%BA%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">4.1.</span> <span class="toc-text">❌ 退出虚拟环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%97%91%EF%B8%8F-%E5%88%A0%E9%99%A4%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">4.2.</span> <span class="toc-text">🗑️ 删除虚拟环境</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BF%BD-%E5%BF%AB%E9%80%9F%E5%8F%82%E8%80%83"><span class="toc-number">5.</span> <span class="toc-text">� 快速参考</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%94%A7-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%80%9F%E6%9F%A5%E8%A1%A8"><span class="toc-number">5.1.</span> <span class="toc-text">🔧 常用命令速查表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8E%AF-%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="toc-number">5.2.</span> <span class="toc-text">🎯 最佳实践建议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%93%9D-gitignore-%E9%85%8D%E7%BD%AE"><span class="toc-number">5.3.</span> <span class="toc-text">📝 .gitignore 配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%A7-%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="toc-number">6.</span> <span class="toc-text">🔧 故障排除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%89-%E6%80%BB%E7%BB%93"><span class="toc-number">7.</span> <span class="toc-text">🎉 总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BF%BD%F0%9F%92%A1-%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E5%BB%BA%E8%AE%AE"><span class="toc-number">7.1.</span> <span class="toc-text">�💡 学习路径建议</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url(/img/home_top.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2023 - 2026 By crowforkotlin</span></div><div class="footer_custom_text">欢迎到此一游~</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: 'Ov23liNYzLaBrOTZBvuB',
+      clientSecret: '872025f8de5446e9dfc8acea0dcce2d0a36daac8',
+      repo: 'crowforkotlin-blog-comment',
+      owner: 'crowforkotlin',
+      admin: ['crowforkotlin'],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || '84e310257484905b1c1ab96ec69c3419'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script src="/js/crystal-cursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="177" alpha="0.7" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="77" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

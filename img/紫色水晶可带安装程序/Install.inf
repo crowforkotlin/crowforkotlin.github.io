@@ -1,0 +1,54 @@
+[Version]
+signature="$Chicago$"
+
+[DefaultInstall]
+CopyFiles = Scheme.Cur, Scheme.Txt
+AddReg    = Scheme.Reg
+
+[DestinationDirs]
+Scheme.Cur = 10,"%CUR_DIR%"
+Scheme.Txt = 10,"%CUR_DIR%"
+
+[Scheme.Reg]
+HKCU,"Control Panel\Cursors\Schemes","%SCHEME_NAME%",,"%10%\%CUR_DIR%\%pointer%,%10%\%CUR_DIR%\%help%,%10%\%CUR_DIR%\%work%,%10%\%CUR_DIR%\%busy%,%10%\%CUR_DIR%\%cross%,%10%\%CUR_DIR%\%Text%,%10%\%CUR_DIR%\%Hand%,%10%\%CUR_DIR%\%unavailiable%,%10%\%CUR_DIR%\%Vert%,%10%\%CUR_DIR%\%Horz%,%10%\%CUR_DIR%\%Dgn1%,%10%\%CUR_DIR%\%Dgn2%,%10%\%CUR_DIR%\%move%,%10%\%CUR_DIR%\%alternate%,%10%\%CUR_DIR%\%link%,%10%\%CUR_DIR%\%pin%,%10%\%CUR_DIR%\%person%"
+
+[Scheme.Cur]
+normal.cur
+help.cur
+working.ani
+busy.ani
+text.cur
+unavailiable.cur
+vertical.cur
+horizontal.cur
+diagonal2.cur
+diagonal1.cur
+move.cur
+link.cur
+precision.cur
+handwriting.cur
+pin.cur
+person.cur
+
+[Scheme.Txt]
+
+[Strings]
+CUR_DIR       = "Purple Crystal Cursors"
+SCHEME_NAME   = "Purple Crystal Cursors"
+pointer       = "normal.cur"
+help          = "help.cur"
+work          = "working.ani"
+busy          = "busy.ani"
+text          = "text.cur"
+unavailiable  = "unavailiable.cur"
+vert          = "vertical.cur"
+horz          = "horizontal.cur"
+dgn1          = "diagonal1.cur"
+dgn2          = "diagonal2.cur"
+move          = "move.cur"
+link          = "link.cur"
+cross         = "precision.cur"
+hand          = "handwriting.cur"
+person        = "person.cur"
+pin           = "pin.cur"
+alternate     = "normal.cur"

@@ -1,0 +1,435 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Android 2025 热修复、动态化方案研究报告 | crowforkotlin</title><meta name="author" content="crowforkotlin"><meta name="copyright" content="crowforkotlin"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Android 2025 热修复、动态化方案研究报告和总结"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Android 2025 热修复、动态化方案研究报告",
+  "url": "https://crowforkotlin.github.io/2025/10/28/Android/Android%E7%83%AD%E4%BF%AE%E5%92%8C%E5%8A%A8%E6%80%81%E5%8C%96%E6%96%B9%E6%A1%88/",
+  "image": "https://crowforkotlin.github.io/img/cover_bg2.jpg",
+  "datePublished": "2025-10-28T10:12:00.000Z",
+  "dateModified": "2026-01-01T08:00:33.486Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "crowforkotlin",
+      "url": "https://wuya.click"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/avatar_round.webp"><link rel="canonical" href="https://crowforkotlin.github.io/2025/10/28/Android/Android%E7%83%AD%E4%BF%AE%E5%92%8C%E5%8A%A8%E6%80%81%E5%8C%96%E6%96%B9%E6%A1%88/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200,"highlightFullpage":true,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Android 2025 热修复、动态化方案研究报告',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/cursor.css"><link rel="styleisheet" href="/self/Kimbiedark.css"><meta name="generator" content="Hexo 6.2.0"></head><body><div id="web_bg" style="background-image: url(/img/home_top.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">46</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">23</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/android"><i class="fa-fw fab fa-android"></i><span> 安卓</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 相关链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: linear-gradient(20deg, #00000000, #00000000);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">crowforkotlin</span></a><a class="nav-page-title" href="/"><span class="site-name">Android 2025 热修复、动态化方案研究报告</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/android"><i class="fa-fw fab fa-android"></i><span> 安卓</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 相关链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Android 2025 热修复、动态化方案研究报告</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-28T10:12:00.000Z" title="发表于 2025-10-28 18:12:00">2025-10-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-01-01T08:00:33.486Z" title="更新于 2026-01-01 16:00:33">2026-01-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Android/">Android</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Android/%E8%B8%A9%E5%9D%91/">踩坑</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">1.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>3分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/2025/10/28/Android/Android%E7%83%AD%E4%BF%AE%E5%92%8C%E5%8A%A8%E6%80%81%E5%8C%96%E6%96%B9%E6%A1%88/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Android-2025-热修复与动态化方案研究报告"><a href="#Android-2025-热修复与动态化方案研究报告" class="headerlink" title="Android 2025 热修复与动态化方案研究报告"></a>Android 2025 热修复与动态化方案研究报告</h1><h2 id="一、热修复方案对比"><a href="#一、热修复方案对比" class="headerlink" title="一、热修复方案对比"></a>一、热修复方案对比</h2><p>热修复方案的核心在于对已发布应用的代码进行即时修复，无需重新发布版本。以下是几种主流方案的特性对比：</p>
+<table>
+<thead>
+<tr>
+<th align="left">特性</th>
+<th align="left">Tinker (腾讯)</th>
+<th align="left">QZone (腾讯)</th>
+<th align="left">AndFix (阿里)</th>
+<th align="left">Robust (美团)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>类替换</strong></td>
+<td align="left">✅ 支持</td>
+<td align="left">✅ 支持</td>
+<td align="left">❌ 不支持</td>
+<td align="left">❌ 不支持</td>
+</tr>
+<tr>
+<td align="left"><strong>So 替换</strong></td>
+<td align="left">✅ 支持</td>
+<td align="left">❌ 不支持</td>
+<td align="left">❌ 不支持</td>
+<td align="left">❌ 不支持</td>
+</tr>
+<tr>
+<td align="left"><strong>资源替换</strong></td>
+<td align="left">✅ 支持</td>
+<td align="left">✅ 支持</td>
+<td align="left">❌ 不支持</td>
+<td align="left">❌ 不支持</td>
+</tr>
+<tr>
+<td align="left"><strong>全平台支持</strong></td>
+<td align="left">✅ 支持</td>
+<td align="left">✅ 支持</td>
+<td align="left">✅ 支持</td>
+<td align="left">✅ 支持</td>
+</tr>
+<tr>
+<td align="left"><strong>即时生效</strong></td>
+<td align="left">❌ 需重启</td>
+<td align="left">❌ 需重启</td>
+<td align="left">✅ 支持</td>
+<td align="left">✅ 支持</td>
+</tr>
+<tr>
+<td align="left"><strong>性能损耗</strong></td>
+<td align="left">较小</td>
+<td align="left">较大</td>
+<td align="left">较小</td>
+<td align="left">较小</td>
+</tr>
+<tr>
+<td align="left"><strong>补丁包大小</strong></td>
+<td align="left">较小</td>
+<td align="left">较大</td>
+<td align="left">一般</td>
+<td align="left">一般</td>
+</tr>
+<tr>
+<td align="left"><strong>开发透明</strong></td>
+<td align="left">✅ 是</td>
+<td align="left">✅ 是</td>
+<td align="left">❌ 否</td>
+<td align="left">❌ 否</td>
+</tr>
+<tr>
+<td align="left"><strong>复杂度</strong></td>
+<td align="left">较低</td>
+<td align="left">较低</td>
+<td align="left">复杂</td>
+<td align="left">复杂</td>
+</tr>
+<tr>
+<td align="left"><strong>Gradle 支持</strong></td>
+<td align="left">✅ 支持</td>
+<td align="left">❌ 不支持</td>
+<td align="left">❌ 不支持</td>
+<td align="left">❌ 不支持</td>
+</tr>
+<tr>
+<td align="left"><strong>Rom 体积</strong></td>
+<td align="left">较大</td>
+<td align="left">较小</td>
+<td align="left">较小</td>
+<td align="left">较小</td>
+</tr>
+<tr>
+<td align="left"><strong>成功率</strong></td>
+<td align="left">较高</td>
+<td align="left">较高</td>
+<td align="left">一般</td>
+<td align="left"><strong>最高</strong></td>
+</tr>
+</tbody></table>
+<p><strong>核心结论：</strong><br>目前，多数主流开源热修复框架（如 AndFix, Robust）已长期未维护。<strong>Tinker</strong> 是当前社区内依然活跃并推荐使用的方案。</p>
+<h3 id="1-Tinker-方案的潜在问题-v1-9-15-2"><a href="#1-Tinker-方案的潜在问题-v1-9-15-2" class="headerlink" title="1. Tinker 方案的潜在问题 (v1.9.15.2)"></a>1. Tinker 方案的潜在问题 (v1.9.15.2)</h3><p>尽管 Tinker 是首选，但在集成到大型项目中时，仍需注意以下挑战：</p>
+<ol>
+<li><strong>Gradle 兼容性问题：</strong> 官方版本对 Gradle 7+ 的支持不佳，直接升级可能会引发编译异常。</li>
+<li><strong>编译打包冲突：</strong><ul>
+<li>当项目依赖了较高版本的 Material 组件 (如 v1.13.0+) 或其他复杂库时，R8 混淆过程极易出现 <code>XXX which is not in loader class</code> 的类丢失错误。</li>
+<li>官方建议通过配置白名单解决，但实际操作中可能依然无法彻底解决问题，有时不得不降级依赖版本。</li>
+</ul>
+</li>
+<li><strong>Application 改造：</strong><ul>
+<li>官方要求 <code>Application</code> 类中不能包含业务逻辑，以避免补丁构建失败。</li>
+<li>对于已有项目，这意味着需要进行大量重构，将相关逻辑封装并通过反射调用，适配成本较高。</li>
+</ul>
+</li>
+</ol>
+<h3 id="2-Shiply-基于-Tinker-的商业化方案"><a href="#2-Shiply-基于-Tinker-的商业化方案" class="headerlink" title="2. Shiply (基于 Tinker 的商业化方案)"></a>2. Shiply (基于 Tinker 的商业化方案)</h3><ul>
+<li><strong>优点：</strong> 基于 Tinker 扩展，原生支持 Gradle 8+，并提供了 Web 控制台用于补丁管理，方案更加成熟。</li>
+<li><strong>缺点：</strong> 依然继承了 Tinker 底层的核心问题，如编译冲突和 Application 改造的复杂性。</li>
+</ul>
+<blockquote>
+<p><strong>参考资料:</strong> <a target="_blank" rel="noopener" href="https://shiply.tds.qq.com/document/hotfix/faq/">Tinker&#x2F;Shiply 常见问题</a></p>
+</blockquote>
+<h3 id="3-热修复方案总结"><a href="#3-热修复方案总结" class="headerlink" title="3. 热修复方案总结"></a>3. 热修复方案总结</h3><ul>
+<li><strong>优点：</strong><ul>
+<li>能够动态修复线上代码，灵活性高。</li>
+<li>补丁产物较小，对性能影响可控。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li><strong>集成成本高：</strong> 引入现有大型项目时，解决编译打包问题、重构 Application 类等工作耗时耗力。</li>
+<li><strong>兼容性风险：</strong> 容易与项目中的第三方依赖产生冲突，稳定性需要充分测试。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="二、动态化方案"><a href="#二、动态化方案" class="headerlink" title="二、动态化方案"></a>二、动态化方案</h2><p>动态化与热修复不同，它更侧重于功能模块的动态下发和执行，而非仅仅是代码“打补丁”。</p>
+<ul>
+<li><strong>实现方式 1 (语言解释器)：</strong> 通过内置的语言解释器（如 JavaScript 引擎）执行插件代码，并桥接到原生平台 API。</li>
+<li><strong>实现方式 2 (插件化框架)：</strong> 通过 Hook 原生实现，动态加载插件文件（如 APK）来执行逻辑，对宿主代码的修改能力有限。</li>
+</ul>
+<h3 id="1-Shadow-腾讯插件化方案"><a href="#1-Shadow-腾讯插件化方案" class="headerlink" title="1. Shadow (腾讯插件化方案)"></a>1. Shadow (腾讯插件化方案)</h3><ul>
+<li><strong>核心特性：</strong> 零反射、全动态的 Android 插件框架，插件产物为 APK 压缩后的 ZIP 文件。</li>
+<li><strong>优点：</strong> 性能接近原生，产物小，已支持原生四大组件等能力。</li>
+<li><strong>商业版：</strong> <a target="_blank" rel="noopener" href="https://shiply.tds.qq.com/document/android-plugin/overview/">Shiply 动态化</a> 基于 Shadow 实现，提供 Web 控制台管理，但部分高级能力需申请开放。</li>
+</ul>
+<h3 id="2-Zipline-Kotlin-Multiplatform-方案"><a href="#2-Zipline-Kotlin-Multiplatform-方案" class="headerlink" title="2. Zipline (Kotlin Multiplatform 方案)"></a>2. Zipline (Kotlin Multiplatform 方案)</h3><ul>
+<li><strong>核心特性：</strong> 通过内置的 QuickJS 引擎解释并执行 JS 代码，桥接到原生平台（Android, iOS, Desktop）。插件文件是 JS 编译后的二进制 <code>.zipline</code> 文件。</li>
+<li><strong>优点：</strong> 跨平台，项目结构清晰。</li>
+<li><strong>缺点：</strong> 不直接支持原生能力，需要自行扩展桥接实现；产物较大，性能相比原生有一定损耗。</li>
+</ul>
+<h3 id="3-动态化方案总结"><a href="#3-动态化方案总结" class="headerlink" title="3. 动态化方案总结"></a>3. 动态化方案总结</h3><ul>
+<li><strong>优点：</strong><ul>
+<li>适配和兼容过程通常比热修复简单。</li>
+<li>插件化使得模块分离，项目结构更清晰。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li>部分框架的插件产物较大。</li>
+<li>依赖解释器的方案性能略低于原生。</li>
+<li>通常无法修复未预先扩展的宿主代码。</li>
+</ul>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://wuya.click">crowforkotlin</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://crowforkotlin.github.io/2025/10/28/Android/Android%E7%83%AD%E4%BF%AE%E5%92%8C%E5%8A%A8%E6%80%81%E5%8C%96%E6%96%B9%E6%A1%88/">https://crowforkotlin.github.io/2025/10/28/Android/Android%E7%83%AD%E4%BF%AE%E5%92%8C%E5%8A%A8%E6%80%81%E5%8C%96%E6%96%B9%E6%A1%88/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://crowforkotlin.github.io" target="_blank">crowforkotlin</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Android/">Android</a><a class="post-meta__tags" href="/tags/%E7%83%AD%E4%BF%AE%E5%A4%8D/">热修复</a><a class="post-meta__tags" href="/tags/%E7%83%AD%E5%8A%A0%E8%BD%BD/">热加载</a></div><div class="post-share"><div class="social-share" data-image="/img/cover_bg2.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/11/18/Library/Zipline%E6%A1%86%E6%9E%B6%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%EF%BC%88%E4%B8%80%EF%BC%89/" title="Zipline 架构深度解析 (一)"><img class="cover" src="/img/cover_bg3.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Zipline 架构深度解析 (一)</div></div><div class="info-2"><div class="info-item-1"> 深入了解Zipline的原理和流程</div></div></div></a><a class="pagination-related" href="/2025/10/22/Kotlin/Kotlin%20Compiler%20(1)%20FIR%20IR%E6%B5%8B%E8%AF%95/" title="Kotlin Compiler (1) FIR &amp; IR测试"><img class="cover" src="/img/cover_bg1.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Kotlin Compiler (1) FIR & IR测试</div></div><div class="info-2"><div class="info-item-1">深入探索 Kotlin 编译器插件的测试机制，核心围绕两种测试类型：用于验证编译时错误的诊断测试 (Diagnostic Test)，和用于验证运行时行为的黑盒代码生成测试 (Box Test)。本文将揭示测试指令（Test Directives）如何通过特殊注释来驱动和配置复杂的测试流程，并阐明测试类的继承关系如何从根本上决定了测试的行为和验证逻辑。</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2023/09/27/Android/01JNI%E5%85%A5%E9%97%A8/" title="① Android JNI 入门指南"><img class="cover" src="/img/cover_bg4.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-27</div><div class="info-item-2">① Android JNI 入门指南</div></div><div class="info-2"><div class="info-item-1">Android JNI(Java Native Interface)入门教程，详细介绍如何在Android项目中集成和使用C/C++代码</div></div></div></a><a class="pagination-related" href="/2025/07/02/Android/Android%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/" title="Android 离屏渲染详解"><img class="cover" src="/img/cover_bg4.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-02</div><div class="info-item-2">Android 离屏渲染详解</div></div><div class="info-2"><div class="info-item-1">深入解析Android离屏渲染的概念、原理、应用场景及性能优化技巧</div></div></div></a><a class="pagination-related" href="/2025/06/11/Android/Avd%20Root/" title="📱 Android虚拟机Root教程"><img class="cover" src="/img/cover_bg3.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-11</div><div class="info-item-2">📱 Android虚拟机Root教程</div></div><div class="info-2"><div class="info-item-1">使用RootAVD工具对Android虚拟机进行Root的详细教程</div></div></div></a><a class="pagination-related" href="/2023/09/27/Android/02JNI%E6%89%93%E5%BC%80%E5%AE%89%E5%8D%93%E4%B8%B2%E5%8F%A3/" title="② 通过JNI打开Android串口"><img class="cover" src="/img/cover_bg1.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-27</div><div class="info-item-2">② 通过JNI打开Android串口</div></div><div class="info-2"><div class="info-item-1">详细介绍如何通过JNI在Android中打开和配置串口通信</div></div></div></a><a class="pagination-related no-desc" href="/2025/06/11/Android/ui/recyclerview/GridLayoutManager%E8%B8%A9%E5%9D%91/" title="Android GridLayoutManager踩坑"><img class="cover" src="/img/cover_bg3.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-11</div><div class="info-item-2">Android GridLayoutManager踩坑</div></div></div></a><a class="pagination-related no-desc" href="/2025/06/11/Android/ui/fragment/Fragment%E9%87%8D%E5%BB%BA%E8%B8%A9%E5%9D%91/" title="Android Fragment重建踩坑"><img class="cover" src="/img/cover_bg4.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-11</div><div class="info-item-2">Android Fragment重建踩坑</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Android-2025-%E7%83%AD%E4%BF%AE%E5%A4%8D%E4%B8%8E%E5%8A%A8%E6%80%81%E5%8C%96%E6%96%B9%E6%A1%88%E7%A0%94%E7%A9%B6%E6%8A%A5%E5%91%8A"><span class="toc-number">1.</span> <span class="toc-text">Android 2025 热修复与动态化方案研究报告</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%83%AD%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88%E5%AF%B9%E6%AF%94"><span class="toc-number">1.1.</span> <span class="toc-text">一、热修复方案对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Tinker-%E6%96%B9%E6%A1%88%E7%9A%84%E6%BD%9C%E5%9C%A8%E9%97%AE%E9%A2%98-v1-9-15-2"><span class="toc-number">1.1.1.</span> <span class="toc-text">1. Tinker 方案的潜在问题 (v1.9.15.2)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Shiply-%E5%9F%BA%E4%BA%8E-Tinker-%E7%9A%84%E5%95%86%E4%B8%9A%E5%8C%96%E6%96%B9%E6%A1%88"><span class="toc-number">1.1.2.</span> <span class="toc-text">2. Shiply (基于 Tinker 的商业化方案)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%83%AD%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93"><span class="toc-number">1.1.3.</span> <span class="toc-text">3. 热修复方案总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%8A%A8%E6%80%81%E5%8C%96%E6%96%B9%E6%A1%88"><span class="toc-number">1.2.</span> <span class="toc-text">二、动态化方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Shadow-%E8%85%BE%E8%AE%AF%E6%8F%92%E4%BB%B6%E5%8C%96%E6%96%B9%E6%A1%88"><span class="toc-number">1.2.1.</span> <span class="toc-text">1. Shadow (腾讯插件化方案)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Zipline-Kotlin-Multiplatform-%E6%96%B9%E6%A1%88"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. Zipline (Kotlin Multiplatform 方案)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%8A%A8%E6%80%81%E5%8C%96%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93"><span class="toc-number">1.2.3.</span> <span class="toc-text">3. 动态化方案总结</span></a></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url(/img/home_top.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2023 - 2026 By crowforkotlin</span></div><div class="footer_custom_text">欢迎到此一游~</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: 'Ov23liNYzLaBrOTZBvuB',
+      clientSecret: '872025f8de5446e9dfc8acea0dcce2d0a36daac8',
+      repo: 'crowforkotlin-blog-comment',
+      owner: 'crowforkotlin',
+      admin: ['crowforkotlin'],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || 'fdb20ba595e4029429ed94780efe1355'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script src="/js/crystal-cursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="177" alpha="0.7" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="77" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
