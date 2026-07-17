@@ -1,5 +1,5 @@
-https://crowforkotlin.github.io/2026/07/15/Unix/Arch-Linux-GRUB-UKI-Boot-Issue/
 https://crowforkotlin.github.io/2026/07/11/Unix/Arch-Linux-Config/
+https://crowforkotlin.github.io/2026/07/15/Unix/Arch-Linux-GRUB-UKI-Boot-Issue/
 https://crowforkotlin.github.io/link/index.html
 https://crowforkotlin.github.io/messageboard/index.html
 https://crowforkotlin.github.io/tags/index.html
@@ -31,8 +31,8 @@ https://crowforkotlin.github.io/2023/09/27/Android/01-JNI-Introduction/
 https://crowforkotlin.github.io/2023/09/27/Android/02-JNI-Serial-Port/
 https://crowforkotlin.github.io/2025/08/08/Android/Adb-Shell-Color-Prompt/
 https://crowforkotlin.github.io/2025/07/02/Android/Adb-Shell-PTY/
-https://crowforkotlin.github.io/2025/10/28/Android/Android-HotFix-Dynamic/
 https://crowforkotlin.github.io/2025/07/02/Android/Android-Offscreen-Rendering/
+https://crowforkotlin.github.io/2025/10/28/Android/Android-HotFix-Dynamic/
 https://crowforkotlin.github.io/2025/06/11/Android/Avd-Root/
 https://crowforkotlin.github.io/2025/07/02/Android/BlurMaskFilter-Memory-Leak/
 https://crowforkotlin.github.io/2025/06/11/Android/Fragment-Rebuild/
@@ -47,11 +47,11 @@ https://crowforkotlin.github.io/tags/NDK/
 https://crowforkotlin.github.io/tags/ADB/
 https://crowforkotlin.github.io/tags/Linux/
 https://crowforkotlin.github.io/tags/Shell/
-https://crowforkotlin.github.io/tags/HotFix/
-https://crowforkotlin.github.io/tags/Tinker/
 https://crowforkotlin.github.io/tags/Canvas/
 https://crowforkotlin.github.io/tags/Rendering/
 https://crowforkotlin.github.io/tags/GPU/
+https://crowforkotlin.github.io/tags/HotFix/
+https://crowforkotlin.github.io/tags/Tinker/
 https://crowforkotlin.github.io/tags/AVD/
 https://crowforkotlin.github.io/tags/Magisk/
 https://crowforkotlin.github.io/tags/Root/
@@ -112,8 +112,8 @@ https://crowforkotlin.github.io/tags/WasmEdge/
 https://crowforkotlin.github.io/tags/JIT/
 https://crowforkotlin.github.io/tags/Cranelift/
 https://crowforkotlin.github.io/categories/Android/
-https://crowforkotlin.github.io/categories/Android/JNI/
 https://crowforkotlin.github.io/categories/Android/UI/
+https://crowforkotlin.github.io/categories/Android/JNI/
 https://crowforkotlin.github.io/categories/Android/ADB/
 https://crowforkotlin.github.io/categories/Git/
 https://crowforkotlin.github.io/categories/Hexo/

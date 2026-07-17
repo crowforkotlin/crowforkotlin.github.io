@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://crowforkotlin.github.io/2026/07/15/Unix/Arch-Linux-GRUB-UKI-Boot-Issue/</loc>
-    <lastmod>2026-07-15</lastmod>
+    <loc>https://crowforkotlin.github.io/2026/07/11/Unix/Arch-Linux-Config/</loc>
+    <lastmod>2026-07-17</lastmod>
   </url>
   <url>
-    <loc>https://crowforkotlin.github.io/2026/07/11/Unix/Arch-Linux-Config/</loc>
+    <loc>https://crowforkotlin.github.io/2026/07/15/Unix/Arch-Linux-GRUB-UKI-Boot-Issue/</loc>
     <lastmod>2026-07-15</lastmod>
   </url>
   <url>
@@ -113,11 +113,11 @@
     <lastmod>2026-07-11</lastmod>
   </url>
   <url>
-    <loc>https://crowforkotlin.github.io/2025/10/28/Android/Android-HotFix-Dynamic/</loc>
+    <loc>https://crowforkotlin.github.io/2025/07/02/Android/Android-Offscreen-Rendering/</loc>
     <lastmod>2026-07-11</lastmod>
   </url>
   <url>
-    <loc>https://crowforkotlin.github.io/2025/07/02/Android/Android-Offscreen-Rendering/</loc>
+    <loc>https://crowforkotlin.github.io/2025/10/28/Android/Android-HotFix-Dynamic/</loc>
     <lastmod>2026-07-11</lastmod>
   </url>
   <url>
