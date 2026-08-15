@@ -1,0 +1,454 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Arch Linux 中 Clash Verge TUN 模式导致热点客户端无法上网的排查与修复 | crowforkotlin</title><meta name="author" content="crowforkotlin"><meta name="copyright" content="crowforkotlin"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="排查 Arch Linux 热点在 Clash Verge TUN 模式下无法为客户端提供网络，并修复 Fake-IP DNS 与热点绕过 TUN 不一致的问题。"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Arch Linux 中 Clash Verge TUN 模式导致热点客户端无法上网的排查与修复",
+  "url": "https://crowforkotlin.github.io/posts/1d9d4eb7/",
+  "image": "https://crowforkotlin.github.io/img/cover_bg4.webp",
+  "datePublished": "2026-08-15T04:00:00.000Z",
+  "dateModified": "2026-08-15T06:41:25.957Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "crowforkotlin",
+      "url": "https://wuya.click"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/avatar_round.webp"><link rel="canonical" href="https://crowforkotlin.github.io/posts/1d9d4eb7/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200,"highlightFullpage":true,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Arch Linux 中 Clash Verge TUN 模式导致热点客户端无法上网的排查与修复',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/cursor.css"><link rel="styleisheet" href="/self/Kimbiedark.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg" style="background-image: url(/img/home_top.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">78</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">20</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/android"><i class="fa-fw fab fa-android"></i><span> 安卓</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 相关链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: linear-gradient(20deg, #00000000, #00000000);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">crowforkotlin</span></a><a class="nav-page-title" href="/"><span class="site-name">Arch Linux 中 Clash Verge TUN 模式导致热点客户端无法上网的排查与修复</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/android"><i class="fa-fw fab fa-android"></i><span> 安卓</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 相关链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Arch Linux 中 Clash Verge TUN 模式导致热点客户端无法上网的排查与修复</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-15T04:00:00.000Z" title="发表于 2026-08-15 12:00:00">2026-08-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-15T06:41:25.957Z" title="更新于 2026-08-15 14:41:25">2026-08-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Network/">Network</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/1d9d4eb7/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h2><p>本文适用于以下组合：</p>
+<ul>
+<li>系统为 Arch Linux；</li>
+<li>使用 NetworkManager 创建 Wi-Fi 热点；</li>
+<li>使用 Clash Verge Rev，其内核为 Mihomo；</li>
+<li>已启用 TUN 模式；</li>
+<li>热点客户端可以连接、可以获取 IP 地址，但无法打开网站；</li>
+<li>关闭 TUN 后，热点客户端立即恢复联网。</li>
+</ul>
+<p>以下名称仅为示例，实际环境必须替换为本机名称：</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>示例值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>热点连接名称</td>
+<td><code>test4096</code></td>
+</tr>
+<tr>
+<td>热点无线接口</td>
+<td><code>wlp2s0</code></td>
+</tr>
+<tr>
+<td>上网接口</td>
+<td><code>enp3s0</code></td>
+</tr>
+<tr>
+<td>热点网段</td>
+<td><code>10.42.0.0/24</code></td>
+</tr>
+<tr>
+<td>热点网关与 DNS</td>
+<td><code>10.42.0.1</code></td>
+</tr>
+</tbody></table>
+<p>本文的修复目标是：<strong>保持主机的 TUN 模式，同时让热点客户端通过物理上网接口正常访问互联网。</strong> 热点客户端不会因此自动使用主机的 Clash 代理，相关限制见文末。</p>
+<h2 id="现象与结论"><a href="#现象与结论" class="headerlink" title="现象与结论"></a>现象与结论</h2><p>典型现象如下：</p>
+<ol>
+<li>主机本身可以正常访问互联网。</li>
+<li>热点客户端能够关联 Wi-Fi，并通过 DHCP 获取 <code>10.42.0.x</code> 地址。</li>
+<li>关闭 Clash Verge 的 TUN 模式后，客户端可以访问互联网。</li>
+<li>启用 TUN 模式后，客户端无法访问域名或网页。</li>
+</ol>
+<p>此问题通常不是热点的 NAT 或防火墙规则缺失，而是以下两项设置组合后的 DNS 路径不一致：</p>
+<ol>
+<li><code>exclude-interface: wlp2s0</code> 让热点客户端的数据不进入 TUN；</li>
+<li>热点使用的 <code>dnsmasq</code> 仍然进入 TUN，获得了 Mihomo 的 Fake-IP DNS 回答。</li>
+</ol>
+<p>客户端得到 <code>198.18.x.x</code> 形式的 Fake-IP 后，会尝试经物理上网接口直接连接这个地址。Fake-IP 仅能由 Mihomo TUN 解释和转发；客户端流量已经绕过 TUN，因此连接失败。</p>
+<h2 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a>相关概念</h2><h3 id="TUN"><a href="#TUN" class="headerlink" title="TUN"></a>TUN</h3><p>TUN 是一个虚拟网络接口。Mihomo 可以通过它接收主机发出的网络连接，再按代理规则转发。启用 <code>auto-route</code> 后，Mihomo 会添加路由规则，使符合条件的流量进入该接口。</p>
+<h3 id="NetworkManager-共享模式"><a href="#NetworkManager-共享模式" class="headerlink" title="NetworkManager 共享模式"></a>NetworkManager 共享模式</h3><p>NetworkManager 的热点共享模式会完成三项工作：</p>
+<ol>
+<li>为热点接口分配私有网段地址，例如 <code>10.42.0.1</code>；</li>
+<li>启动 <code>dnsmasq</code>，为客户端分配 IP 地址并提供 DNS；</li>
+<li>添加 NAT 和转发规则，使 <code>10.42.0.0/24</code> 的客户端能够经主机的上网接口访问外部网络。</li>
+</ol>
+<p>NAT 是“网络地址转换”。它会把客户端的私有地址转换成主机的上网地址，使外部网络的返回数据能够回到正确的客户端。</p>
+<h3 id="Fake-IP"><a href="#Fake-IP" class="headerlink" title="Fake-IP"></a>Fake-IP</h3><p>Fake-IP 是 Mihomo 常用的 DNS 工作方式。DNS 查询会得到一个保留地址，例如 <code>198.18.0.119</code>，而不是网站的真实公网地址。之后，进入 TUN 的连接由 Mihomo 根据这个地址还原网站域名并转发。</p>
+<p>因此，Fake-IP 不是可以直接通过路由器访问的公网地址。发送给 Fake-IP 的连接必须经过 Mihomo。</p>
+<h3 id="UID"><a href="#UID" class="headerlink" title="UID"></a>UID</h3><p>UID 是 Linux 用于标识用户和进程的数字。一个服务进程以哪个用户运行，就拥有对应的 UID。Mihomo 的 <code>exclude-uid</code> 可以让指定 UID 发出的本机流量不进入 TUN。</p>
+<p>在常见的 Arch Linux NetworkManager 配置中，热点 <code>dnsmasq</code> 以 <code>nobody</code> 用户运行，其 UID 通常为 <code>65534</code>。该值必须在本机确认，不能仅凭经验固定填写。</p>
+<h2 id="故障路径"><a href="#故障路径" class="headerlink" title="故障路径"></a>故障路径</h2><h3 id="仅排除热点接口时"><a href="#仅排除热点接口时" class="headerlink" title="仅排除热点接口时"></a>仅排除热点接口时</h3><p>为热点接口加入排除规则后，普通客户端数据会走物理上网接口：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">热点客户端</span><br><span class="line">  -&gt; wlp2s0</span><br><span class="line">  -&gt; NetworkManager 转发与 NAT</span><br><span class="line">  -&gt; enp3s0</span><br><span class="line">  -&gt; 路由器与互联网</span><br></pre></td></tr></table></figure>
+
+<p>这条路径是正确的。但 DNS 的路径不同：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">热点客户端</span><br><span class="line">  -&gt; 10.42.0.1:53</span><br><span class="line">  -&gt; dnsmasq（主机本地进程）</span><br><span class="line">  -&gt; Mihomo TUN</span><br><span class="line">  -&gt; Fake-IP 回答，例如 198.18.0.119</span><br></pre></td></tr></table></figure>
+
+<p><code>exclude-interface</code> 只匹配从 <code>wlp2s0</code> 接收的数据包。<code>dnsmasq</code> 向上游 DNS 发起的查询是主机本地生成的数据包，没有 <code>wlp2s0</code> 这个入站接口，因此仍可能被 TUN 接管。</p>
+<h3 id="加入-dnsmasq-UID-排除后"><a href="#加入-dnsmasq-UID-排除后" class="headerlink" title="加入 dnsmasq UID 排除后"></a>加入 dnsmasq UID 排除后</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">热点客户端</span><br><span class="line">  -&gt; 10.42.0.1:53</span><br><span class="line">  -&gt; dnsmasq（UID 65534）</span><br><span class="line">  -&gt; 物理上网接口</span><br><span class="line">  -&gt; 上游 DNS</span><br><span class="line">  -&gt; 真实公网 IP</span><br></pre></td></tr></table></figure>
+
+<p>此时，客户端获得真实公网 IP；客户端的普通流量也经物理上网接口发送，DNS 结果与数据路径一致，网站可以正常访问。</p>
+<h2 id="排查步骤"><a href="#排查步骤" class="headerlink" title="排查步骤"></a>排查步骤</h2><h3 id="1-确认热点接口和上网接口"><a href="#1-确认热点接口和上网接口" class="headerlink" title="1. 确认热点接口和上网接口"></a>1. 确认热点接口和上网接口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nmcli device status</span><br><span class="line">ip -br addr</span><br></pre></td></tr></table></figure>
+
+<p>确认热点使用的无线接口，例如 <code>wlp2s0</code>，以及主机实际连接互联网的接口，例如 <code>enp3s0</code>。接口名称因设备而异，不应直接套用示例名称。</p>
+<h3 id="2-检查热点客户端的出站路由"><a href="#2-检查热点客户端的出站路由" class="headerlink" title="2. 检查热点客户端的出站路由"></a>2. 检查热点客户端的出站路由</h3><p>将 <code>10.42.0.209</code> 替换为一个已连接客户端的实际地址：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip route get 1.1.1.1 from 10.42.0.209 iif wlp2s0</span><br></pre></td></tr></table></figure>
+
+<p>在本例中，正确结果应类似：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1.1.1.1 from 10.42.0.209 via 192.168.1.1 dev enp3s0</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>dev enp3s0</code> 表示客户端流量会从物理上网接口离开主机。若结果显示 <code>dev Mihomo</code>，说明热点接口排除未生效，或编辑的不是当前生效的 Merge 配置。</p>
+<h3 id="3-检查-NetworkManager-的-NAT-与转发规则"><a href="#3-检查-NetworkManager-的-NAT-与转发规则" class="headerlink" title="3. 检查 NetworkManager 的 NAT 与转发规则"></a>3. 检查 NetworkManager 的 NAT 与转发规则</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> nft -a list ruleset</span><br></pre></td></tr></table></figure>
+
+<p>共享热点正常时，应存在类似以下规则：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">table ip nm-shared-wlp2s0 &#123;</span><br><span class="line">    chain nat_postrouting &#123;</span><br><span class="line">        type nat hook postrouting priority srcnat; policy accept;</span><br><span class="line">        ip saddr 10.42.0.0/24 ip daddr != 10.42.0.0/24 masquerade</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    chain filter_forward &#123;</span><br><span class="line">        type filter hook forward priority filter; policy accept;</span><br><span class="line">        ip saddr 10.42.0.0/24 iifname &quot;wlp2s0&quot; accept</span><br><span class="line">        ip daddr 10.42.0.0/24 oifname &quot;wlp2s0&quot; ct state &#123; established, related &#125; accept</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>masquerade</code> 表示 NAT 已启用；从 <code>wlp2s0</code> 进入的流量和返回 <code>wlp2s0</code> 的已建立连接均被允许。若这些规则存在，且第 2 步的路由结果指向物理上网接口，问题通常不在 NAT 或转发规则。</p>
+<h3 id="4-确认-dnsmasq-的-UID"><a href="#4-确认-dnsmasq-的-UID" class="headerlink" title="4. 确认 dnsmasq 的 UID"></a>4. 确认 dnsmasq 的 UID</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ps -eo user,uid,pid,args | rg <span class="string">&#x27;[d]nsmasq|nm-dnsmasq&#x27;</span></span><br><span class="line"><span class="built_in">id</span> -u nobody</span><br></pre></td></tr></table></figure>
+
+<p>常见输出形式如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nobody  65534  1234  /usr/sbin/dnsmasq ...</span><br><span class="line">65534</span><br></pre></td></tr></table></figure>
+
+<p>第一列是运行用户，第二列是 UID。若 <code>dnsmasq</code> 的 UID 不是 <code>65534</code>，后续配置必须使用实际输出的数字。</p>
+<h3 id="5-直接查询热点-DNS"><a href="#5-直接查询热点-DNS" class="headerlink" title="5. 直接查询热点 DNS"></a>5. 直接查询热点 DNS</h3><p>安装 <code>bind</code> 后可使用 <code>dig</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pacman -S <span class="built_in">bind</span></span><br><span class="line">dig @10.42.0.1 example.com A +short</span><br></pre></td></tr></table></figure>
+
+<p>在出现该问题的配置中，可能得到 <code>198.18.x.x</code>。该网段是常见的 Fake-IP 地址范围，不是 <code>example.com</code> 应直接访问的公网地址。修复后，结果应为正常公网地址，且不应位于 <code>198.18.0.0/15</code>。</p>
+<h2 id="修复方法"><a href="#修复方法" class="headerlink" title="修复方法"></a>修复方法</h2><h3 id="1-编辑当前订阅的-Merge-配置"><a href="#1-编辑当前订阅的-Merge-配置" class="headerlink" title="1. 编辑当前订阅的 Merge 配置"></a>1. 编辑当前订阅的 Merge 配置</h3><p>在 Clash Verge Rev 的配置界面中，打开当前正在使用的订阅，编辑其 <strong>Merge 配置</strong>。不同版本的界面可能将该入口显示为 <code>Merge</code>、<code>Mixin</code> 或“合并配置”。</p>
+<p>不要直接编辑以下运行时文件：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/.local/share/io.github.clash-verge-rev.clash-verge-rev/clash-verge.yaml</span><br></pre></td></tr></table></figure>
+
+<p>该文件由 Clash Verge Rev 生成，重启内核或切换配置后可能被覆盖。它适合用于检查最终配置，不适合作为持久化修改位置。</p>
+<p>在已有的 <code>tun:</code> 配置块中加入以下内容。不要在同一个 YAML 文件中重复创建第二个 <code>tun:</code> 块。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">tun:</span></span><br><span class="line">  <span class="attr">exclude-interface:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">wlp2s0</span></span><br><span class="line">  <span class="attr">exclude-uid:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">65534</span></span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>wlp2s0</code> 必须替换为热点实际使用的无线接口；</li>
+<li><code>65534</code> 必须替换为第 4 步查到的 <code>dnsmasq</code> UID；</li>
+<li>保留原有的 <code>enable</code>、<code>auto-route</code>、<code>dns-hijack</code>、<code>stack</code> 等 TUN 设置；这里只是向原有 <code>tun:</code> 块补充两项排除规则。</li>
+</ul>
+<p><code>exclude-interface</code> 处理热点客户端转发的流量，<code>exclude-uid</code> 处理 <code>dnsmasq</code> 进程主动发出的 DNS 查询。两项规则需要同时存在。</p>
+<h3 id="2-重载内核并重新连接客户端"><a href="#2-重载内核并重新连接客户端" class="headerlink" title="2. 重载内核并重新连接客户端"></a>2. 重载内核并重新连接客户端</h3><p>保存 Merge 配置后，在 Clash Verge Rev 中重启 Mihomo 内核。随后让热点客户端断开 Wi-Fi 再重新连接，以清除客户端可能缓存的旧 DNS 结果。</p>
+<p>可以检查生成后的运行时配置是否包含这两项设置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rg -n -C 3 <span class="string">&#x27;exclude-interface|exclude-uid&#x27;</span> \</span><br><span class="line">  ~/.local/share/io.github.clash-verge-rev.clash-verge-rev/clash-verge.yaml</span><br></pre></td></tr></table></figure>
+
+<p>该检查仅适用于通过常规 Arch Linux 软件包安装的 Clash Verge Rev。若使用 Flatpak 或其他安装方式，应从应用界面确认最终生效的配置。</p>
+<h2 id="验证结果"><a href="#验证结果" class="headerlink" title="验证结果"></a>验证结果</h2><p>按以下顺序验证，可以区分网络转发问题和 DNS 问题：</p>
+<ol>
+<li>在热点客户端上访问 <code>1.1.1.1</code>，或执行 <code>ping -c 3 1.1.1.1</code>。成功说明 IPv4 转发和 NAT 基本正常。</li>
+<li>在主机上执行 <code>dig @10.42.0.1 example.com A +short</code>。结果不应为 <code>198.18.x.x</code>。</li>
+<li>在客户端浏览器中访问普通域名，例如 <code>https://example.com</code>。</li>
+<li>再次执行第 2 节中的 <code>ip route get</code> 命令，确认客户端流量仍经物理上网接口离开主机。</li>
+</ol>
+<h2 id="常见异常"><a href="#常见异常" class="headerlink" title="常见异常"></a>常见异常</h2><table>
+<thead>
+<tr>
+<th>现象</th>
+<th>可能原因</th>
+<th>处理方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>路由结果显示 <code>dev Mihomo</code></td>
+<td>热点接口名称错误，或 Merge 配置未生效</td>
+<td>检查 <code>ip -br addr</code>、当前订阅和内核重载状态</td>
+</tr>
+<tr>
+<td>DNS 仍返回 <code>198.18.x.x</code></td>
+<td><code>dnsmasq</code> UID 不是 <code>65534</code>，或 UID 排除未生效</td>
+<td>重新执行 <code>ps -eo user,uid,pid,args</code>，使用实际 UID</td>
+</tr>
+<tr>
+<td>可以访问 IP，不能访问域名</td>
+<td>DNS 路径仍被 TUN 生成 Fake-IP</td>
+<td>检查 <code>exclude-uid</code> 与热点 DNS 地址</td>
+</tr>
+<tr>
+<td>IP 地址也无法访问</td>
+<td>不是本问题的 DNS 情况</td>
+<td>检查 <code>nft</code> 规则、上网接口、每个接口的 IPv4 转发状态</td>
+</tr>
+<tr>
+<td>客户端偶发无法访问部分网站</td>
+<td>热点启用了 IPv6，但上游没有可共享的 IPv6 前缀</td>
+<td>单独检查 IPv6，必要时关闭热点连接的 IPv6 共享</td>
+</tr>
+</tbody></table>
+<p>若没有 IPv6 上游网络，并且确认问题来自 IPv6，可关闭该热点连接的 IPv6：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nmcli connection modify test4096 ipv6.method disabled</span><br><span class="line">nmcli connection down test4096</span><br><span class="line">nmcli connection up test4096</span><br></pre></td></tr></table></figure>
+
+<p>这不是 Fake-IP 问题的主要修复，只用于处理没有 IPv6 上游时客户端优先使用 IPv6 所产生的额外现象。</p>
+<h2 id="exclude-uid-的影响范围"><a href="#exclude-uid-的影响范围" class="headerlink" title="exclude-uid 的影响范围"></a><code>exclude-uid</code> 的影响范围</h2><p><code>exclude-uid: 65534</code> 不只匹配 DNS 端口，它会让所有以 UID <code>65534</code> 运行的本机进程绕过 TUN。通常该 UID 只有 <code>dnsmasq</code> 等低权限服务使用，但应先检查实际范围：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -eo user=,uid=,<span class="built_in">comm</span>= | awk <span class="string">&#x27;$2 == 65534&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>若有其他需要强制经过代理的服务也使用该 UID，应重新评估该方案。对于 NetworkManager 热点使用的独立 <code>dnsmasq</code> 进程，此排除通常足够小，且能避免 DNS 得到与客户端数据路径不匹配的 Fake-IP。</p>
+<h2 id="为什么-Windows-中可能没有此问题"><a href="#为什么-Windows-中可能没有此问题" class="headerlink" title="为什么 Windows 中可能没有此问题"></a>为什么 Windows 中可能没有此问题</h2><p>Windows 的 Internet Connection Sharing、DNS 服务和 TUN 驱动与 Arch Linux 中的 NetworkManager、<code>dnsmasq</code>、Mihomo 路由规则不是同一套实现。Windows 中热点 DNS 服务可能没有进入 TUN，或 TUN 驱动对共享流量有不同处理，因此相同操作不一定复现问题。</p>
+<p>应根据实际数据路径判断，而不是假设两个系统的热点共享行为一致。</p>
+<h2 id="适用边界"><a href="#适用边界" class="headerlink" title="适用边界"></a>适用边界</h2><p>本文配置让热点客户端绕过 TUN 并直接通过主机的物理上网接口访问互联网。它解决的是“开启主机 TUN 后，热点客户端无法上网”的问题。</p>
+<p>若目标是让热点客户端的全部流量也经过 Clash 代理，则需要单独设计透明代理、路由标记和 DNS 规则，不能仅删除 <code>exclude-interface</code>。否则容易再次出现循环路由、Fake-IP 无法访问或客户端流量被错误丢弃的问题。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://wiki.metacubex.one/config/inbound/tun/">Mihomo TUN 配置说明</a></li>
+<li><a target="_blank" rel="noopener" href="https://networkmanager.dev/docs/api/latest">NetworkManager IPv4 配置说明</a></li>
+<li><a target="_blank" rel="noopener" href="https://wiki.nftables.org/">nftables Wiki</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://wuya.click">crowforkotlin</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://crowforkotlin.github.io/posts/1d9d4eb7/">https://crowforkotlin.github.io/posts/1d9d4eb7/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://crowforkotlin.github.io" target="_blank">crowforkotlin</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Arch-Linux/">Arch Linux</a><a class="post-meta__tags" href="/tags/NetworkManager/">NetworkManager</a><a class="post-meta__tags" href="/tags/Clash-Verge/">Clash Verge</a><a class="post-meta__tags" href="/tags/Mihomo/">Mihomo</a><a class="post-meta__tags" href="/tags/TUN/">TUN</a><a class="post-meta__tags" href="/tags/DNS/">DNS</a></div><div class="post-share"><div class="social-share" data-image="/img/cover_bg4.webp" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/posts/d68f55d7/" title="Arch Linux UKI 模式下 GRUB 启动项异常排查与修复"><img class="cover" src="/img/cover_bg2.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Arch Linux UKI 模式下 GRUB 启动项异常排查与修复</div></div><div class="info-2"><div class="info-item-1">Arch Linux 启用 UKI 后 GRUB 生成错误启动项导致系统无法启动的完整排查与修复记录</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/posts/ac5c8ec9/" title="Arch Linux 环境配置"><img class="cover" src="/img/cover_bg1.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-11</div><div class="info-item-2">Arch Linux 环境配置</div></div><div class="info-2"><div class="info-item-1">Archlinux 全套配置</div></div></div></a><a class="pagination-related" href="/posts/bc9db95d/" title="Arch Linux 安装流程"><img class="cover" src="/img/cover_bg3.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-29</div><div class="info-item-2">Arch Linux 安装流程</div></div><div class="info-2"><div class="info-item-1">基于 Ventoy 和 archinstall 的 Arch Linux 双系统安装流程记录。</div></div></div></a><a class="pagination-related" href="/posts/d68f55d7/" title="Arch Linux UKI 模式下 GRUB 启动项异常排查与修复"><img class="cover" src="/img/cover_bg2.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-15</div><div class="info-item-2">Arch Linux UKI 模式下 GRUB 启动项异常排查与修复</div></div><div class="info-2"><div class="info-item-1">Arch Linux 启用 UKI 后 GRUB 生成错误启动项导致系统无法启动的完整排查与修复记录</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">适用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%B0%E8%B1%A1%E4%B8%8E%E7%BB%93%E8%AE%BA"><span class="toc-number">2.</span> <span class="toc-text">现象与结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5"><span class="toc-number">3.</span> <span class="toc-text">相关概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TUN"><span class="toc-number">3.1.</span> <span class="toc-text">TUN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NetworkManager-%E5%85%B1%E4%BA%AB%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.2.</span> <span class="toc-text">NetworkManager 共享模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fake-IP"><span class="toc-number">3.3.</span> <span class="toc-text">Fake-IP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UID"><span class="toc-number">3.4.</span> <span class="toc-text">UID</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%85%E9%9A%9C%E8%B7%AF%E5%BE%84"><span class="toc-number">4.</span> <span class="toc-text">故障路径</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%85%E6%8E%92%E9%99%A4%E7%83%AD%E7%82%B9%E6%8E%A5%E5%8F%A3%E6%97%B6"><span class="toc-number">4.1.</span> <span class="toc-text">仅排除热点接口时</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E5%85%A5-dnsmasq-UID-%E6%8E%92%E9%99%A4%E5%90%8E"><span class="toc-number">4.2.</span> <span class="toc-text">加入 dnsmasq UID 排除后</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%92%E6%9F%A5%E6%AD%A5%E9%AA%A4"><span class="toc-number">5.</span> <span class="toc-text">排查步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%A1%AE%E8%AE%A4%E7%83%AD%E7%82%B9%E6%8E%A5%E5%8F%A3%E5%92%8C%E4%B8%8A%E7%BD%91%E6%8E%A5%E5%8F%A3"><span class="toc-number">5.1.</span> <span class="toc-text">1. 确认热点接口和上网接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%A3%80%E6%9F%A5%E7%83%AD%E7%82%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E5%87%BA%E7%AB%99%E8%B7%AF%E7%94%B1"><span class="toc-number">5.2.</span> <span class="toc-text">2. 检查热点客户端的出站路由</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%A3%80%E6%9F%A5-NetworkManager-%E7%9A%84-NAT-%E4%B8%8E%E8%BD%AC%E5%8F%91%E8%A7%84%E5%88%99"><span class="toc-number">5.3.</span> <span class="toc-text">3. 检查 NetworkManager 的 NAT 与转发规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%A1%AE%E8%AE%A4-dnsmasq-%E7%9A%84-UID"><span class="toc-number">5.4.</span> <span class="toc-text">4. 确认 dnsmasq 的 UID</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E7%9B%B4%E6%8E%A5%E6%9F%A5%E8%AF%A2%E7%83%AD%E7%82%B9-DNS"><span class="toc-number">5.5.</span> <span class="toc-text">5. 直接查询热点 DNS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">修复方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%BC%96%E8%BE%91%E5%BD%93%E5%89%8D%E8%AE%A2%E9%98%85%E7%9A%84-Merge-%E9%85%8D%E7%BD%AE"><span class="toc-number">6.1.</span> <span class="toc-text">1. 编辑当前订阅的 Merge 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%87%8D%E8%BD%BD%E5%86%85%E6%A0%B8%E5%B9%B6%E9%87%8D%E6%96%B0%E8%BF%9E%E6%8E%A5%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="toc-number">6.2.</span> <span class="toc-text">2. 重载内核并重新连接客户端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C"><span class="toc-number">7.</span> <span class="toc-text">验证结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%BC%82%E5%B8%B8"><span class="toc-number">8.</span> <span class="toc-text">常见异常</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#exclude-uid-%E7%9A%84%E5%BD%B1%E5%93%8D%E8%8C%83%E5%9B%B4"><span class="toc-number">9.</span> <span class="toc-text">exclude-uid 的影响范围</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-Windows-%E4%B8%AD%E5%8F%AF%E8%83%BD%E6%B2%A1%E6%9C%89%E6%AD%A4%E9%97%AE%E9%A2%98"><span class="toc-number">10.</span> <span class="toc-text">为什么 Windows 中可能没有此问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E8%BE%B9%E7%95%8C"><span class="toc-number">11.</span> <span class="toc-text">适用边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">12.</span> <span class="toc-text">参考资料</span></a></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url(/img/home_top.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2023 - 2026 By crowforkotlin</span></div><div class="footer_custom_text">欢迎到此一游~</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: 'Ov23liNYzLaBrOTZBvuB',
+      clientSecret: '872025f8de5446e9dfc8acea0dcce2d0a36daac8',
+      repo: 'crowforkotlin-blog-comment',
+      owner: 'crowforkotlin',
+      admin: ['crowforkotlin'],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || '9863124c567e4e4e2656049228d1236f'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script src="/js/crystal-cursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="177" alpha="0.7" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="77" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

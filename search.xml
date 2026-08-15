@@ -4,6 +4,41 @@
   
     
     <entry>
+      <title>Arch Linux 中 Clash Verge TUN 模式导致热点客户端无法上网的排查与修复</title>
+      <link href="/posts/1d9d4eb7/"/>
+      <url>/posts/1d9d4eb7/</url>
+      
+        <content type="html"><![CDATA[<h2 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h2><p>本文适用于以下组合：</p><ul><li>系统为 Arch Linux；</li><li>使用 NetworkManager 创建 Wi-Fi 热点；</li><li>使用 Clash Verge Rev，其内核为 Mihomo；</li><li>已启用 TUN 模式；</li><li>热点客户端可以连接、可以获取 IP 地址，但无法打开网站；</li><li>关闭 TUN 后，热点客户端立即恢复联网。</li></ul><p>以下名称仅为示例，实际环境必须替换为本机名称：</p><table><thead><tr><th>项目</th><th>示例值</th></tr></thead><tbody><tr><td>热点连接名称</td><td><code>test4096</code></td></tr><tr><td>热点无线接口</td><td><code>wlp2s0</code></td></tr><tr><td>上网接口</td><td><code>enp3s0</code></td></tr><tr><td>热点网段</td><td><code>10.42.0.0/24</code></td></tr><tr><td>热点网关与 DNS</td><td><code>10.42.0.1</code></td></tr></tbody></table><p>本文的修复目标是：<strong>保持主机的 TUN 模式，同时让热点客户端通过物理上网接口正常访问互联网。</strong> 热点客户端不会因此自动使用主机的 Clash 代理，相关限制见文末。</p><h2 id="现象与结论"><a href="#现象与结论" class="headerlink" title="现象与结论"></a>现象与结论</h2><p>典型现象如下：</p><ol><li>主机本身可以正常访问互联网。</li><li>热点客户端能够关联 Wi-Fi，并通过 DHCP 获取 <code>10.42.0.x</code> 地址。</li><li>关闭 Clash Verge 的 TUN 模式后，客户端可以访问互联网。</li><li>启用 TUN 模式后，客户端无法访问域名或网页。</li></ol><p>此问题通常不是热点的 NAT 或防火墙规则缺失，而是以下两项设置组合后的 DNS 路径不一致：</p><ol><li><code>exclude-interface: wlp2s0</code> 让热点客户端的数据不进入 TUN；</li><li>热点使用的 <code>dnsmasq</code> 仍然进入 TUN，获得了 Mihomo 的 Fake-IP DNS 回答。</li></ol><p>客户端得到 <code>198.18.x.x</code> 形式的 Fake-IP 后，会尝试经物理上网接口直接连接这个地址。Fake-IP 仅能由 Mihomo TUN 解释和转发；客户端流量已经绕过 TUN，因此连接失败。</p><h2 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a>相关概念</h2><h3 id="TUN"><a href="#TUN" class="headerlink" title="TUN"></a>TUN</h3><p>TUN 是一个虚拟网络接口。Mihomo 可以通过它接收主机发出的网络连接，再按代理规则转发。启用 <code>auto-route</code> 后，Mihomo 会添加路由规则，使符合条件的流量进入该接口。</p><h3 id="NetworkManager-共享模式"><a href="#NetworkManager-共享模式" class="headerlink" title="NetworkManager 共享模式"></a>NetworkManager 共享模式</h3><p>NetworkManager 的热点共享模式会完成三项工作：</p><ol><li>为热点接口分配私有网段地址，例如 <code>10.42.0.1</code>；</li><li>启动 <code>dnsmasq</code>，为客户端分配 IP 地址并提供 DNS；</li><li>添加 NAT 和转发规则，使 <code>10.42.0.0/24</code> 的客户端能够经主机的上网接口访问外部网络。</li></ol><p>NAT 是“网络地址转换”。它会把客户端的私有地址转换成主机的上网地址，使外部网络的返回数据能够回到正确的客户端。</p><h3 id="Fake-IP"><a href="#Fake-IP" class="headerlink" title="Fake-IP"></a>Fake-IP</h3><p>Fake-IP 是 Mihomo 常用的 DNS 工作方式。DNS 查询会得到一个保留地址，例如 <code>198.18.0.119</code>，而不是网站的真实公网地址。之后，进入 TUN 的连接由 Mihomo 根据这个地址还原网站域名并转发。</p><p>因此，Fake-IP 不是可以直接通过路由器访问的公网地址。发送给 Fake-IP 的连接必须经过 Mihomo。</p><h3 id="UID"><a href="#UID" class="headerlink" title="UID"></a>UID</h3><p>UID 是 Linux 用于标识用户和进程的数字。一个服务进程以哪个用户运行，就拥有对应的 UID。Mihomo 的 <code>exclude-uid</code> 可以让指定 UID 发出的本机流量不进入 TUN。</p><p>在常见的 Arch Linux NetworkManager 配置中，热点 <code>dnsmasq</code> 以 <code>nobody</code> 用户运行，其 UID 通常为 <code>65534</code>。该值必须在本机确认，不能仅凭经验固定填写。</p><h2 id="故障路径"><a href="#故障路径" class="headerlink" title="故障路径"></a>故障路径</h2><h3 id="仅排除热点接口时"><a href="#仅排除热点接口时" class="headerlink" title="仅排除热点接口时"></a>仅排除热点接口时</h3><p>为热点接口加入排除规则后，普通客户端数据会走物理上网接口：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">热点客户端</span><br><span class="line">  -&gt; wlp2s0</span><br><span class="line">  -&gt; NetworkManager 转发与 NAT</span><br><span class="line">  -&gt; enp3s0</span><br><span class="line">  -&gt; 路由器与互联网</span><br></pre></td></tr></table></figure><p>这条路径是正确的。但 DNS 的路径不同：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">热点客户端</span><br><span class="line">  -&gt; 10.42.0.1:53</span><br><span class="line">  -&gt; dnsmasq（主机本地进程）</span><br><span class="line">  -&gt; Mihomo TUN</span><br><span class="line">  -&gt; Fake-IP 回答，例如 198.18.0.119</span><br></pre></td></tr></table></figure><p><code>exclude-interface</code> 只匹配从 <code>wlp2s0</code> 接收的数据包。<code>dnsmasq</code> 向上游 DNS 发起的查询是主机本地生成的数据包，没有 <code>wlp2s0</code> 这个入站接口，因此仍可能被 TUN 接管。</p><h3 id="加入-dnsmasq-UID-排除后"><a href="#加入-dnsmasq-UID-排除后" class="headerlink" title="加入 dnsmasq UID 排除后"></a>加入 dnsmasq UID 排除后</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">热点客户端</span><br><span class="line">  -&gt; 10.42.0.1:53</span><br><span class="line">  -&gt; dnsmasq（UID 65534）</span><br><span class="line">  -&gt; 物理上网接口</span><br><span class="line">  -&gt; 上游 DNS</span><br><span class="line">  -&gt; 真实公网 IP</span><br></pre></td></tr></table></figure><p>此时，客户端获得真实公网 IP；客户端的普通流量也经物理上网接口发送，DNS 结果与数据路径一致，网站可以正常访问。</p><h2 id="排查步骤"><a href="#排查步骤" class="headerlink" title="排查步骤"></a>排查步骤</h2><h3 id="1-确认热点接口和上网接口"><a href="#1-确认热点接口和上网接口" class="headerlink" title="1. 确认热点接口和上网接口"></a>1. 确认热点接口和上网接口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nmcli device status</span><br><span class="line">ip -br addr</span><br></pre></td></tr></table></figure><p>确认热点使用的无线接口，例如 <code>wlp2s0</code>，以及主机实际连接互联网的接口，例如 <code>enp3s0</code>。接口名称因设备而异，不应直接套用示例名称。</p><h3 id="2-检查热点客户端的出站路由"><a href="#2-检查热点客户端的出站路由" class="headerlink" title="2. 检查热点客户端的出站路由"></a>2. 检查热点客户端的出站路由</h3><p>将 <code>10.42.0.209</code> 替换为一个已连接客户端的实际地址：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip route get 1.1.1.1 from 10.42.0.209 iif wlp2s0</span><br></pre></td></tr></table></figure><p>在本例中，正确结果应类似：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1.1.1.1 from 10.42.0.209 via 192.168.1.1 dev enp3s0</span><br></pre></td></tr></table></figure><p>其中 <code>dev enp3s0</code> 表示客户端流量会从物理上网接口离开主机。若结果显示 <code>dev Mihomo</code>，说明热点接口排除未生效，或编辑的不是当前生效的 Merge 配置。</p><h3 id="3-检查-NetworkManager-的-NAT-与转发规则"><a href="#3-检查-NetworkManager-的-NAT-与转发规则" class="headerlink" title="3. 检查 NetworkManager 的 NAT 与转发规则"></a>3. 检查 NetworkManager 的 NAT 与转发规则</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> nft -a list ruleset</span><br></pre></td></tr></table></figure><p>共享热点正常时，应存在类似以下规则：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">table ip nm-shared-wlp2s0 &#123;</span><br><span class="line">    chain nat_postrouting &#123;</span><br><span class="line">        type nat hook postrouting priority srcnat; policy accept;</span><br><span class="line">        ip saddr 10.42.0.0/24 ip daddr != 10.42.0.0/24 masquerade</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    chain filter_forward &#123;</span><br><span class="line">        type filter hook forward priority filter; policy accept;</span><br><span class="line">        ip saddr 10.42.0.0/24 iifname &quot;wlp2s0&quot; accept</span><br><span class="line">        ip daddr 10.42.0.0/24 oifname &quot;wlp2s0&quot; ct state &#123; established, related &#125; accept</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><code>masquerade</code> 表示 NAT 已启用；从 <code>wlp2s0</code> 进入的流量和返回 <code>wlp2s0</code> 的已建立连接均被允许。若这些规则存在，且第 2 步的路由结果指向物理上网接口，问题通常不在 NAT 或转发规则。</p><h3 id="4-确认-dnsmasq-的-UID"><a href="#4-确认-dnsmasq-的-UID" class="headerlink" title="4. 确认 dnsmasq 的 UID"></a>4. 确认 dnsmasq 的 UID</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ps -eo user,uid,pid,args | rg <span class="string">&#x27;[d]nsmasq|nm-dnsmasq&#x27;</span></span><br><span class="line"><span class="built_in">id</span> -u nobody</span><br></pre></td></tr></table></figure><p>常见输出形式如下：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nobody  65534  1234  /usr/sbin/dnsmasq ...</span><br><span class="line">65534</span><br></pre></td></tr></table></figure><p>第一列是运行用户，第二列是 UID。若 <code>dnsmasq</code> 的 UID 不是 <code>65534</code>，后续配置必须使用实际输出的数字。</p><h3 id="5-直接查询热点-DNS"><a href="#5-直接查询热点-DNS" class="headerlink" title="5. 直接查询热点 DNS"></a>5. 直接查询热点 DNS</h3><p>安装 <code>bind</code> 后可使用 <code>dig</code>：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pacman -S <span class="built_in">bind</span></span><br><span class="line">dig @10.42.0.1 example.com A +short</span><br></pre></td></tr></table></figure><p>在出现该问题的配置中，可能得到 <code>198.18.x.x</code>。该网段是常见的 Fake-IP 地址范围，不是 <code>example.com</code> 应直接访问的公网地址。修复后，结果应为正常公网地址，且不应位于 <code>198.18.0.0/15</code>。</p><h2 id="修复方法"><a href="#修复方法" class="headerlink" title="修复方法"></a>修复方法</h2><h3 id="1-编辑当前订阅的-Merge-配置"><a href="#1-编辑当前订阅的-Merge-配置" class="headerlink" title="1. 编辑当前订阅的 Merge 配置"></a>1. 编辑当前订阅的 Merge 配置</h3><p>在 Clash Verge Rev 的配置界面中，打开当前正在使用的订阅，编辑其 <strong>Merge 配置</strong>。不同版本的界面可能将该入口显示为 <code>Merge</code>、<code>Mixin</code> 或“合并配置”。</p><p>不要直接编辑以下运行时文件：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/.local/share/io.github.clash-verge-rev.clash-verge-rev/clash-verge.yaml</span><br></pre></td></tr></table></figure><p>该文件由 Clash Verge Rev 生成，重启内核或切换配置后可能被覆盖。它适合用于检查最终配置，不适合作为持久化修改位置。</p><p>在已有的 <code>tun:</code> 配置块中加入以下内容。不要在同一个 YAML 文件中重复创建第二个 <code>tun:</code> 块。</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">tun:</span></span><br><span class="line">  <span class="attr">exclude-interface:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">wlp2s0</span></span><br><span class="line">  <span class="attr">exclude-uid:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">65534</span></span><br></pre></td></tr></table></figure><p>说明：</p><ul><li><code>wlp2s0</code> 必须替换为热点实际使用的无线接口；</li><li><code>65534</code> 必须替换为第 4 步查到的 <code>dnsmasq</code> UID；</li><li>保留原有的 <code>enable</code>、<code>auto-route</code>、<code>dns-hijack</code>、<code>stack</code> 等 TUN 设置；这里只是向原有 <code>tun:</code> 块补充两项排除规则。</li></ul><p><code>exclude-interface</code> 处理热点客户端转发的流量，<code>exclude-uid</code> 处理 <code>dnsmasq</code> 进程主动发出的 DNS 查询。两项规则需要同时存在。</p><h3 id="2-重载内核并重新连接客户端"><a href="#2-重载内核并重新连接客户端" class="headerlink" title="2. 重载内核并重新连接客户端"></a>2. 重载内核并重新连接客户端</h3><p>保存 Merge 配置后，在 Clash Verge Rev 中重启 Mihomo 内核。随后让热点客户端断开 Wi-Fi 再重新连接，以清除客户端可能缓存的旧 DNS 结果。</p><p>可以检查生成后的运行时配置是否包含这两项设置：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rg -n -C 3 <span class="string">&#x27;exclude-interface|exclude-uid&#x27;</span> \</span><br><span class="line">  ~/.local/share/io.github.clash-verge-rev.clash-verge-rev/clash-verge.yaml</span><br></pre></td></tr></table></figure><p>该检查仅适用于通过常规 Arch Linux 软件包安装的 Clash Verge Rev。若使用 Flatpak 或其他安装方式，应从应用界面确认最终生效的配置。</p><h2 id="验证结果"><a href="#验证结果" class="headerlink" title="验证结果"></a>验证结果</h2><p>按以下顺序验证，可以区分网络转发问题和 DNS 问题：</p><ol><li>在热点客户端上访问 <code>1.1.1.1</code>，或执行 <code>ping -c 3 1.1.1.1</code>。成功说明 IPv4 转发和 NAT 基本正常。</li><li>在主机上执行 <code>dig @10.42.0.1 example.com A +short</code>。结果不应为 <code>198.18.x.x</code>。</li><li>在客户端浏览器中访问普通域名，例如 <code>https://example.com</code>。</li><li>再次执行第 2 节中的 <code>ip route get</code> 命令，确认客户端流量仍经物理上网接口离开主机。</li></ol><h2 id="常见异常"><a href="#常见异常" class="headerlink" title="常见异常"></a>常见异常</h2><table><thead><tr><th>现象</th><th>可能原因</th><th>处理方式</th></tr></thead><tbody><tr><td>路由结果显示 <code>dev Mihomo</code></td><td>热点接口名称错误，或 Merge 配置未生效</td><td>检查 <code>ip -br addr</code>、当前订阅和内核重载状态</td></tr><tr><td>DNS 仍返回 <code>198.18.x.x</code></td><td><code>dnsmasq</code> UID 不是 <code>65534</code>，或 UID 排除未生效</td><td>重新执行 <code>ps -eo user,uid,pid,args</code>，使用实际 UID</td></tr><tr><td>可以访问 IP，不能访问域名</td><td>DNS 路径仍被 TUN 生成 Fake-IP</td><td>检查 <code>exclude-uid</code> 与热点 DNS 地址</td></tr><tr><td>IP 地址也无法访问</td><td>不是本问题的 DNS 情况</td><td>检查 <code>nft</code> 规则、上网接口、每个接口的 IPv4 转发状态</td></tr><tr><td>客户端偶发无法访问部分网站</td><td>热点启用了 IPv6，但上游没有可共享的 IPv6 前缀</td><td>单独检查 IPv6，必要时关闭热点连接的 IPv6 共享</td></tr></tbody></table><p>若没有 IPv6 上游网络，并且确认问题来自 IPv6，可关闭该热点连接的 IPv6：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nmcli connection modify test4096 ipv6.method disabled</span><br><span class="line">nmcli connection down test4096</span><br><span class="line">nmcli connection up test4096</span><br></pre></td></tr></table></figure><p>这不是 Fake-IP 问题的主要修复，只用于处理没有 IPv6 上游时客户端优先使用 IPv6 所产生的额外现象。</p><h2 id="exclude-uid-的影响范围"><a href="#exclude-uid-的影响范围" class="headerlink" title="exclude-uid 的影响范围"></a><code>exclude-uid</code> 的影响范围</h2><p><code>exclude-uid: 65534</code> 不只匹配 DNS 端口，它会让所有以 UID <code>65534</code> 运行的本机进程绕过 TUN。通常该 UID 只有 <code>dnsmasq</code> 等低权限服务使用，但应先检查实际范围：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -eo user=,uid=,<span class="built_in">comm</span>= | awk <span class="string">&#x27;$2 == 65534&#x27;</span></span><br></pre></td></tr></table></figure><p>若有其他需要强制经过代理的服务也使用该 UID，应重新评估该方案。对于 NetworkManager 热点使用的独立 <code>dnsmasq</code> 进程，此排除通常足够小，且能避免 DNS 得到与客户端数据路径不匹配的 Fake-IP。</p><h2 id="为什么-Windows-中可能没有此问题"><a href="#为什么-Windows-中可能没有此问题" class="headerlink" title="为什么 Windows 中可能没有此问题"></a>为什么 Windows 中可能没有此问题</h2><p>Windows 的 Internet Connection Sharing、DNS 服务和 TUN 驱动与 Arch Linux 中的 NetworkManager、<code>dnsmasq</code>、Mihomo 路由规则不是同一套实现。Windows 中热点 DNS 服务可能没有进入 TUN，或 TUN 驱动对共享流量有不同处理，因此相同操作不一定复现问题。</p><p>应根据实际数据路径判断，而不是假设两个系统的热点共享行为一致。</p><h2 id="适用边界"><a href="#适用边界" class="headerlink" title="适用边界"></a>适用边界</h2><p>本文配置让热点客户端绕过 TUN 并直接通过主机的物理上网接口访问互联网。它解决的是“开启主机 TUN 后，热点客户端无法上网”的问题。</p><p>若目标是让热点客户端的全部流量也经过 Clash 代理，则需要单独设计透明代理、路由标记和 DNS 规则，不能仅删除 <code>exclude-interface</code>。否则容易再次出现循环路由、Fake-IP 无法访问或客户端流量被错误丢弃的问题。</p><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul><li><a href="https://wiki.metacubex.one/config/inbound/tun/">Mihomo TUN 配置说明</a></li><li><a href="https://networkmanager.dev/docs/api/latest">NetworkManager IPv4 配置说明</a></li><li><a href="https://wiki.nftables.org/">nftables Wiki</a></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Network </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Arch Linux </tag>
+            
+            <tag> NetworkManager </tag>
+            
+            <tag> Clash Verge </tag>
+            
+            <tag> Mihomo </tag>
+            
+            <tag> TUN </tag>
+            
+            <tag> DNS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Arch Linux UKI 模式下 GRUB 启动项异常排查与修复</title>
       <link href="/posts/d68f55d7/"/>
       <url>/posts/d68f55d7/</url>
@@ -20,9 +55,9 @@
       
         <tags>
             
-            <tag> Unix </tag>
-            
             <tag> Arch Linux </tag>
+            
+            <tag> Unix </tag>
             
             <tag> GRUB </tag>
             
@@ -51,9 +86,9 @@
       
         <tags>
             
-            <tag> Unix </tag>
-            
             <tag> Arch Linux </tag>
+            
+            <tag> Unix </tag>
             
         </tags>
       
@@ -78,9 +113,9 @@
       
         <tags>
             
-            <tag> Unix </tag>
-            
             <tag> Arch Linux </tag>
+            
+            <tag> Unix </tag>
             
         </tags>
       
@@ -171,9 +206,9 @@
       
         <tags>
             
-            <tag> Hexo </tag>
-            
             <tag> Shell </tag>
+            
+            <tag> Hexo </tag>
             
         </tags>
       
@@ -481,13 +516,13 @@
       
         <tags>
             
-            <tag> Shell </tag>
-            
             <tag> Android </tag>
             
             <tag> ADB </tag>
             
             <tag> Linux </tag>
+            
+            <tag> Shell </tag>
             
         </tags>
       
