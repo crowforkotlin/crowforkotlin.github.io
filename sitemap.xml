@@ -83,6 +83,15 @@
   </url>
   
   <url>
+    <loc>https://crowforkotlin.github.io/posts/d68f55d7/</loc>
+    
+    <lastmod>2026-07-17</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://crowforkotlin.github.io/posts/bc9db95d/</loc>
     
     <lastmod>2026-07-17</lastmod>
@@ -93,15 +102,6 @@
   
   <url>
     <loc>https://crowforkotlin.github.io/posts/57099ace/</loc>
-    
-    <lastmod>2026-07-17</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://crowforkotlin.github.io/posts/d68f55d7/</loc>
     
     <lastmod>2026-07-17</lastmod>
     
@@ -317,7 +317,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/link/index.html</loc>
+    <loc>https://crowforkotlin.github.io/messageboard/index.html</loc>
     
     <lastmod>2026-07-11</lastmod>
     
@@ -326,7 +326,7 @@
   </url>
   
   <url>
-    <loc>https://crowforkotlin.github.io/messageboard/index.html</loc>
+    <loc>https://crowforkotlin.github.io/link/index.html</loc>
     
     <lastmod>2026-07-11</lastmod>
     
