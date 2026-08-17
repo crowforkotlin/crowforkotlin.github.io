@@ -1,0 +1,457 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Wasm/WASI 模块验证与 Wasmtime 测试命令 | crowforkotlin</title><meta name="author" content="crowforkotlin"><meta name="copyright" content="crowforkotlin"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="给出 Kotlin/WASI 及其他语言生成的 Wasm 模块的结构验证、Wasmtime 运行与 AOT 编译、wasm-tools 文本和节区分析，以及产物差异对比命令。"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Wasm/WASI 模块验证与 Wasmtime 测试命令",
+  "url": "https://crowforkotlin.github.io/posts/59d96cfa/",
+  "image": "https://crowforkotlin.github.io/img/cover_bg1.jpg",
+  "datePublished": "2026-08-17T07:30:00.000Z",
+  "dateModified": "2026-08-17T07:05:48.585Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "crowforkotlin",
+      "url": "https://wuya.click"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/avatar_round.webp"><link rel="canonical" href="https://crowforkotlin.github.io/posts/59d96cfa/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200,"highlightFullpage":true,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Wasm/WASI 模块验证与 Wasmtime 测试命令',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/self/maple-mono.css"><link rel="stylesheet" href="/css/cursor.css"><link rel="styleisheet" href="/self/Kimbiedark.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg" style="background-image: url(/img/home_top.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">79</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">20</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/android"><i class="fa-fw fab fa-android"></i><span> 安卓</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 相关链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: linear-gradient(20deg, #00000000, #00000000);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">crowforkotlin</span></a><a class="nav-page-title" href="/"><span class="site-name">Wasm/WASI 模块验证与 Wasmtime 测试命令</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/android"><i class="fa-fw fab fa-android"></i><span> 安卓</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 相关链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Wasm/WASI 模块验证与 Wasmtime 测试命令</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-17T07:30:00.000Z" title="发表于 2026-08-17 15:30:00">2026-08-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-17T07:05:48.585Z" title="更新于 2026-08-17 15:05:48">2026-08-17</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/WebAssembly/">WebAssembly</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/59d96cfa/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="适用范围"><a href="#适用范围" class="headerlink" title="适用范围"></a>适用范围</h2><p>本文用于检查 Kotlin <code>wasmWasi</code> 产物，也适用于 Rust、C&#x2F;C++、Go 等工具链生成的核心 Wasm 模块。前提是模块使用的 WASI 版本、导入接口和 WebAssembly 提案均受目标 Wasmtime 运行时支持。</p>
+<p>文中的示例路径来自一个 Kotlin&#x2F;WASI 工程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./wasi-failure/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-failure.wasm</span><br></pre></td></tr></table></figure>
+
+<p>执行前必须替换以下内容：</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入 <code>.wasm</code> 路径</td>
+<td>当前构建产物的实际路径</td>
+</tr>
+<tr>
+<td>输出文件名</td>
+<td>用于区分模块、配置或实验组的名称</td>
+</tr>
+<tr>
+<td><code>--target</code></td>
+<td>部署设备的目标三元组；在本机测试时可省略</td>
+</tr>
+</tbody></table>
+<p><code>aarch64-linux-android</code> 表示 AArch64 Android 目标，不表示输入 Wasm 文件的架构。<code>.wasm</code> 是 Wasm 字节码，<code>.cwasm</code> 是 Wasmtime 为指定目标生成的预编译产物。后者不能在架构、Wasmtime 版本或配置不匹配的环境中直接使用。</p>
+<h2 id="工具与版本确认"><a href="#工具与版本确认" class="headerlink" title="工具与版本确认"></a>工具与版本确认</h2><p>本文涉及以下工具：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://wasmtime.dev/">Wasmtime</a>：运行、AOT 编译和反汇编 Wasm 模块。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/bytecodealliance/wasm-tools">wasm-tools</a>：验证、打印、检查节区和处理 Component Model 产物。</li>
+<li><a target="_blank" rel="noopener" href="https://component-model.bytecodealliance.org/design/wit.html">WIT</a>：Component Model 的接口定义语言。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Kotlin/wit-bindgen">Kotlin&#x2F;wit-bindgen</a>：Kotlin 官方组织维护的 <code>wit-bindgen</code> 分支，可用于了解 WIT 绑定与组件化流程。</li>
+</ul>
+<p>先记录工具版本，并查看当前 CLI 实际支持的选项。Wasmtime 的配置项会随版本演进，不能仅根据其他机器上的命令判断参数可用性。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wasmtime --version</span><br><span class="line">wasm-tools --version</span><br><span class="line"></span><br><span class="line">wasmtime compile -W <span class="built_in">help</span></span><br><span class="line">wasmtime compile -O <span class="built_in">help</span></span><br><span class="line">wasmtime compile -C <span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+
+<p>创建独立输出目录，避免分析文件与构建产物混在一起：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p ./output</span><br></pre></td></tr></table></figure>
+
+<h2 id="构建与结构验证"><a href="#构建与结构验证" class="headerlink" title="构建与结构验证"></a>构建与结构验证</h2><p>对于 Kotlin&#x2F;WASI，先执行对应模块的 Gradle 编译任务。模块名应替换为当前工程的实际名称。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gradlew :wasi-failure:compileProductionLibraryKotlinWasmWasiOptimize</span><br></pre></td></tr></table></figure>
+
+<p>随后使用 <code>wasm-tools validate</code> 验证二进制格式与所需提案。命令成功时不输出内容，退出码为 <code>0</code>；失败时会报告字节偏移和验证原因。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wasm-tools validate \</span><br><span class="line">  --features=gc,function-references,exceptions,-simd,-relaxed-simd \</span><br><span class="line">  ./wasi-failure/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-failure.wasm</span><br></pre></td></tr></table></figure>
+
+<p>该命令验证的是 WebAssembly 二进制及特性集合，不能证明模块能够被目标宿主实例化。运行期还必须满足 WASI、宿主自定义导入和 Wasmtime 配置要求。</p>
+<p>若只需确认文件可以被当前版本的 <code>wasm-tools</code> 解析，可使用更宽松的检查：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wasm-tools validate --features=all ./path/to/module.wasm</span><br></pre></td></tr></table></figure>
+
+<h2 id="Wasmtime-运行测试"><a href="#Wasmtime-运行测试" class="headerlink" title="Wasmtime 运行测试"></a>Wasmtime 运行测试</h2><h3 id="WASI-Command-模块"><a href="#WASI-Command-模块" class="headerlink" title="WASI Command 模块"></a>WASI Command 模块</h3><p>命令型模块通常导出 <code>_start</code>。<code>wasmtime run</code> 会连接标准 WASI 接口并执行入口：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wasmtime run ./path/to/module.wasm</span><br></pre></td></tr></table></figure>
+
+<p>运行参数必须放在 Wasm 文件之后，才会作为 WASI <code>argv</code> 传给模块：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wasmtime run ./path/to/module.wasm --input ./data.json</span><br></pre></td></tr></table></figure>
+
+<p>目录预打开属于 Wasmtime 参数，必须放在 Wasm 文件之前：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wasmtime run --<span class="built_in">dir</span> ./data ./path/to/module.wasm</span><br></pre></td></tr></table></figure>
+
+<h3 id="Reactor-或库模块"><a href="#Reactor-或库模块" class="headerlink" title="Reactor 或库模块"></a>Reactor 或库模块</h3><p>Kotlin <code>productionLibrary</code> 一类产物可能是库或 Reactor，而不是可直接执行的 WASI Command。此类模块通常需要宿主先调用 <code>_initialize</code>，再调用业务导出。可用 CLI 做基础探测：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wasmtime run --invoke _initialize ./path/to/module.wasm</span><br></pre></td></tr></table></figure>
+
+<p>对于仅含数值参数和返回值的核心 Wasm 导出，CLI 也可以调用指定函数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wasmtime run --invoke add ./path/to/module.wasm 1 2</span><br></pre></td></tr></table></figure>
+
+<p><code>--invoke</code> 的核心模块参数表示仍处于不稳定状态。Kotlin 的字符串、对象、GC 引用或复杂 ABI 不应依赖 CLI 调用验证，应由实际 Android 或原生宿主通过对应的 Wasmtime 嵌入 API 验证。</p>
+<h2 id="Wasmtime-AOT-编译"><a href="#Wasmtime-AOT-编译" class="headerlink" title="Wasmtime AOT 编译"></a>Wasmtime AOT 编译</h2><p>下面的命令保留了 Kotlin&#x2F;WASI + Android 场景中常用的配置。可以直接复制，然后只替换输入路径、输出路径和 <code>--target</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">wasmtime compile ./wasi-failure/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-failure.wasm -o ./output/failure-plugin.cwasm \</span><br><span class="line">  --target aarch64-linux-android \</span><br><span class="line">  -W gc=y \</span><br><span class="line">  -W function-references=y \</span><br><span class="line">  -W exceptions=y \</span><br><span class="line">  -W simd=n \</span><br><span class="line">  -W relaxed-simd=n \</span><br><span class="line">  -O static-memory-guard-size=0 \</span><br><span class="line">  -O dynamic-memory-guard-size=0 \</span><br><span class="line">  -O signals-based-traps=n \</span><br><span class="line">  -O opt-level=2 \</span><br><span class="line">  -C cranelift-debug-verifier=no</span><br></pre></td></tr></table></figure>
+
+<p>配置含义如下：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>--target aarch64-linux-android</code></td>
+<td>将 <code>.cwasm</code> 生成为 Android AArch64 机器码。部署目标必须与之匹配。</td>
+</tr>
+<tr>
+<td><code>-W gc=y</code>、<code>function-references=y</code>、<code>exceptions=y</code></td>
+<td>启用 Kotlin&#x2F;Wasm 常见的 GC、函数引用和异常提案支持。目标宿主也必须启用相同能力。</td>
+</tr>
+<tr>
+<td><code>-W simd=n</code>、<code>relaxed-simd=n</code></td>
+<td>禁用 SIMD 与 Relaxed SIMD。它们不会转换已有 SIMD 指令；若输入模块确实依赖这些指令，编译会失败。</td>
+</tr>
+<tr>
+<td><code>-O signals-based-traps=n</code></td>
+<td>不使用宿主信号处理 Wasm 陷阱，适合需要避免与 Android 运行时信号处理冲突的嵌入场景。</td>
+</tr>
+<tr>
+<td><code>-O opt-level=2</code></td>
+<td>使用 Wasmtime 当前 CLI 支持的二级优化。</td>
+</tr>
+<tr>
+<td><code>-C cranelift-debug-verifier=no</code></td>
+<td>关闭 Cranelift 内部调试验证器，减少编译时开销；它不替代 <code>wasm-tools validate</code>。</td>
+</tr>
+</tbody></table>
+<p>在 Wasmtime v47 中，<code>static-memory-guard-size</code> 与 <code>dynamic-memory-guard-size</code> 仍可用，但已经标记为弃用。新版本应将上面两行替换为以下一行，不要同时保留三项：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-C memory-guard-size=0 \</span><br></pre></td></tr></table></figure>
+
+<p>交叉编译成功仅表示当前 Wasmtime 可以为该目标生成 <code>.cwasm</code>。<code>aarch64-linux-android</code> 产物不能在 x86_64 开发机上运行。应在相同 Android ABI、相同或兼容 Wasmtime 版本及相同特性配置的宿主中加载。</p>
+<p>对于本机 AOT 回归测试，省略 <code>--target</code> 以生成本机产物，再运行该产物：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wasmtime compile ./path/to/module.wasm -o ./output/module.host.cwasm</span><br><span class="line">wasmtime run ./output/module.host.cwasm</span><br></pre></td></tr></table></figure>
+
+<p>若模块依赖 GC、异常或其他非默认提案，第二组命令也必须带上与目标宿主一致的 <code>-W</code>、<code>-O</code> 和 <code>-C</code> 配置。</p>
+<h3 id="查看-AOT-原生代码"><a href="#查看-AOT-原生代码" class="headerlink" title="查看 AOT 原生代码"></a>查看 AOT 原生代码</h3><p><code>wasmtime objdump</code> 可以查看 <code>.cwasm</code> 中生成的目标机器码。它适合定位某个 Wasm 函数产生的原生指令，或比较不同优化配置的结果。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wasmtime objdump ./output/failure-plugin.cwasm &gt; ./output/failure-plugin.native.txt</span><br></pre></td></tr></table></figure>
+
+<p>需要确认某个目标的 Cranelift 可用设置时，使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wasmtime settings --target aarch64-linux-android</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用-wasm-tools-预览与分析"><a href="#使用-wasm-tools-预览与分析" class="headerlink" title="使用 wasm-tools 预览与分析"></a>使用 wasm-tools 预览与分析</h2><h3 id="输出-WAT-文本"><a href="#输出-WAT-文本" class="headerlink" title="输出 WAT 文本"></a>输出 WAT 文本</h3><p><code>wasm-tools print</code> 将二进制 Wasm 转为 WAT。<code>--name-unnamed</code> 会为未命名项生成稳定名称，便于阅读和差异比较。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wasm-tools <span class="built_in">print</span> --name-unnamed \</span><br><span class="line">  ./wasi-failure/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-failure.wasm \</span><br><span class="line">  -o ./output/failure-plugin.wat</span><br></pre></td></tr></table></figure>
+
+<p>大型 Kotlin&#x2F;Wasm 模块的函数体通常很长。只检查导入、导出、类型和函数轮廓时，可输出骨架：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wasm-tools <span class="built_in">print</span> --skeleton --name-unnamed \</span><br><span class="line">  ./path/to/module.wasm \</span><br><span class="line">  -o ./output/module.skeleton.wat</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看节区、元数据和二进制偏移"><a href="#查看节区、元数据和二进制偏移" class="headerlink" title="查看节区、元数据和二进制偏移"></a>查看节区、元数据和二进制偏移</h3><p><code>objdump</code> 给出每个标准节和自定义节的偏移、字节数及条目数量。它用于判断体积增长来自 <code>code</code>、<code>data</code>、<code>name</code>、DWARF 或其他自定义节。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wasm-tools objdump ./path/to/module.wasm -o ./output/module.sections.txt</span><br></pre></td></tr></table></figure>
+
+<p><code>metadata show</code> 可查看模块或组件的名称、<code>producers</code>、嵌套模块及大小比例。JSON 输出便于保存或进一步处理。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wasm-tools metadata show --json ./path/to/module.wasm \</span><br><span class="line">  -o ./output/module.metadata.json</span><br></pre></td></tr></table></figure>
+
+<p>需要精确对应二进制偏移与结构时，使用 <code>dump</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wasm-tools dump ./path/to/module.wasm -o ./output/module.bytes.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="WIT-与-Component-Model"><a href="#WIT-与-Component-Model" class="headerlink" title="WIT 与 Component Model"></a>WIT 与 Component Model</h3><p>WIT 描述 Component Model 的导入、导出与类型。它不是普通核心 Wasm 模块的替代品，而是组件 ABI 的接口契约。</p>
+<p>当输入文件已经是 Component Model 二进制时，可以从其接口中还原 WIT：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wasm-tools component wit ./path/to/component.wasm</span><br></pre></td></tr></table></figure>
+
+<p><code>Kotlin/wit-bindgen</code> 是 Kotlin 官方组织维护的上游 <code>wit-bindgen</code> 分支。它关注 WIT 绑定生成与组件化流程；直接由 Kotlin <code>wasmWasi</code> 生成的核心模块是否可以组件化，取决于 Kotlin 版本、WASI 版本和目标组件适配器，不能仅凭文件扩展名判断。</p>
+<h2 id="两个模块的完整对比"><a href="#两个模块的完整对比" class="headerlink" title="两个模块的完整对比"></a>两个模块的完整对比</h2><p>以下命令用于比较成功与失败模块。使用 <code>&gt;</code> 覆盖旧结果，避免多次执行时将过期内容追加到同一份报告。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p ./output</span><br><span class="line"></span><br><span class="line">wasm-tools validate --features=gc,function-references,exceptions,-simd,-relaxed-simd \</span><br><span class="line">  ./wasi-success/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-success.wasm</span><br><span class="line"></span><br><span class="line">wasm-tools validate --features=gc,function-references,exceptions,-simd,-relaxed-simd \</span><br><span class="line">  ./wasi-failure/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-failure.wasm</span><br><span class="line"></span><br><span class="line">wasm-tools <span class="built_in">print</span> --name-unnamed \</span><br><span class="line">  ./wasi-success/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-success.wasm \</span><br><span class="line">  -o ./output/success-plugin.wat</span><br><span class="line"></span><br><span class="line">wasm-tools <span class="built_in">print</span> --name-unnamed \</span><br><span class="line">  ./wasi-failure/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-failure.wasm \</span><br><span class="line">  -o ./output/failure-plugin.wat</span><br><span class="line"></span><br><span class="line">wasm-tools objdump \</span><br><span class="line">  ./wasi-success/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-success.wasm \</span><br><span class="line">  -o ./output/success-plugin.sections.txt</span><br><span class="line"></span><br><span class="line">wasm-tools objdump \</span><br><span class="line">  ./wasi-failure/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-failure.wasm \</span><br><span class="line">  -o ./output/failure-plugin.sections.txt</span><br><span class="line"></span><br><span class="line"><span class="built_in">wc</span> -c \</span><br><span class="line">  ./wasi-success/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-success.wasm \</span><br><span class="line">  ./wasi-failure/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-failure.wasm</span><br><span class="line"></span><br><span class="line">success_bytes=$(<span class="built_in">wc</span> -c &lt; ./wasi-success/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-success.wasm)</span><br><span class="line">failure_bytes=$(<span class="built_in">wc</span> -c &lt; ./wasi-failure/build/compileSync/wasmWasi/main/productionLibrary/optimized/kotlinwasi-wasmtime-issue-wasi-failure.wasm)</span><br><span class="line"><span class="built_in">printf</span> <span class="string">&#x27;failure - success: %+d bytes\n&#x27;</span> <span class="string">&quot;<span class="subst">$((failure_bytes - success_bytes)</span>)&quot;</span></span><br><span class="line"></span><br><span class="line">diff -u ./output/success-plugin.wat ./output/failure-plugin.wat &gt; ./output/wat.diff.txt</span><br><span class="line">diff -u ./output/success-plugin.sections.txt ./output/failure-plugin.sections.txt &gt; ./output/sections.diff.txt</span><br></pre></td></tr></table></figure>
+
+<p><code>diff</code> 发现差异时返回退出码 <code>1</code>，这是预期结果，不代表分析失败。若命令在 CI 中执行，应单独处理该退出码，避免将“文件不同”误判为任务失败。</p>
+<p>建议按以下顺序阅读结果：</p>
+<ol>
+<li>先比较 <code>wc -c</code> 的总字节数，确认差异规模。</li>
+<li>再查看 <code>sections.diff.txt</code>，定位增长的节区。</li>
+<li>最后检查 <code>wat.diff.txt</code>，分析导入、导出、类型、全局变量和函数体变化。</li>
+<li>若 WAT 仍不足以定位问题，以 <code>module.bytes.txt</code> 中的偏移配合编译器报错和 <code>wasmtime objdump</code> 继续分析。</li>
+</ol>
+<h2 id="常见结论"><a href="#常见结论" class="headerlink" title="常见结论"></a>常见结论</h2><table>
+<thead>
+<tr>
+<th>现象</th>
+<th>首先检查的内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>wasm-tools validate</code> 失败</td>
+<td>报错偏移、工具版本和提案集合。</td>
+</tr>
+<tr>
+<td><code>wasmtime compile</code> 不支持某条指令</td>
+<td>模块所需提案与 <code>-W</code> 配置，以及 Wasmtime 版本。</td>
+</tr>
+<tr>
+<td><code>.cwasm</code> 无法加载</td>
+<td>Wasmtime 版本、目标三元组、CPU 特性和运行时配置是否与编译时一致。</td>
+</tr>
+<tr>
+<td>CLI 无法实例化模块</td>
+<td>WASI 版本、非 WASI 导入、预打开目录和宿主能力。</td>
+</tr>
+<tr>
+<td>调用业务导出后发生初始化错误</td>
+<td>模块是否是 Reactor；宿主是否已调用 <code>_initialize</code> 并完成 WASI 配置。</td>
+</tr>
+</tbody></table>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.wasmtime.dev/cli-options.html">Wasmtime CLI 文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/bytecodealliance/wasmtime/releases">Wasmtime Releases</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/bytecodealliance/wasm-tools">wasm-tools 项目</a></li>
+<li><a target="_blank" rel="noopener" href="https://component-model.bytecodealliance.org/design/wit.html">WebAssembly Component Model 与 WIT</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Kotlin/wit-bindgen">Kotlin&#x2F;wit-bindgen</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://wuya.click">crowforkotlin</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://crowforkotlin.github.io/posts/59d96cfa/">https://crowforkotlin.github.io/posts/59d96cfa/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://crowforkotlin.github.io" target="_blank">crowforkotlin</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Kotlin/">Kotlin</a><a class="post-meta__tags" href="/tags/WebAssembly/">WebAssembly</a><a class="post-meta__tags" href="/tags/WASI/">WASI</a><a class="post-meta__tags" href="/tags/Wasmtime/">Wasmtime</a><a class="post-meta__tags" href="/tags/wasm-tools/">wasm-tools</a></div><div class="post-share"><div class="social-share" data-image="/img/cover_bg1.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/posts/1d9d4eb7/" title="Arch Linux 中 Clash Verge TUN 模式导致热点客户端无法上网的排查与修复"><img class="cover" src="/img/cover_bg3.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Arch Linux 中 Clash Verge TUN 模式导致热点客户端无法上网的排查与修复</div></div><div class="info-2"><div class="info-item-1">排查 Arch Linux 热点在 Clash Verge TUN 模式下无法为客户端提供网络，并修复 Fake-IP DNS 与热点绕过 TUN 不一致的问题。</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/posts/711a5ddb/" title="Wasm&#x2F;WASI 的本质区别与宿主运行时生命周期认识"><img class="cover" src="/img/cover_bg4.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-25</div><div class="info-item-2">Wasm&#x2F;WASI 的本质区别与宿主运行时生命周期认识</div></div><div class="info-2"><div class="info-item-1">记录在 C 语言宿主环境集成 Kotlin/Wasm 插件时遇到依赖与运行时崩溃问题。深入剖析 Wasm 与 WASI 的本质区别，以及宿主（Host）与客体（Guest）之间的契约绑定机制。</div></div></div></a><a class="pagination-related" href="/posts/7cbe2b8/" title="Wasmtime JIT 编译机制与 Cranelift 内部原理：基于 Issue #12229 的技术术语解析"><img class="cover" src="/img/cover_bg4.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-01</div><div class="info-item-2">Wasmtime JIT 编译机制与 Cranelift 内部原理：基于 Issue #12229 的技术术语解析</div></div><div class="info-2"><div class="info-item-1">本文深入剖析 Wasmtime Issue #12229，探讨 Kotlin/Wasm 编译产物在 Android 运行时触发 JIT 内存暴涨与 "Function too large" 错误的底层机制。涵盖 Cranelift IR、SSA、虚拟寄存器（VReg）、VSS/RSS 内存模型及信号处理等核心技术术语解析。</div></div></div></a><a class="pagination-related" href="/posts/55e66811/" title="Android JNI 嵌入 Wasmtime：从 SIGILL 崩溃到稳定运行配置与日志重定向"><img class="cover" src="/img/cover_bg3.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-27</div><div class="info-item-2">Android JNI 嵌入 Wasmtime：从 SIGILL 崩溃到稳定运行配置与日志重定向</div></div><div class="info-2"><div class="info-item-1">详细解析在 Android JNI 环境中嵌入 Wasmtime 运行 Kotlin/Wasm 模块的全过程。本文提供了一套“兼容性优先”的 Wasmtime 配置，彻底解决了 Android 平台常见的 SIGILL 致命崩溃和 Wasm null reference 陷阱。同时，通过 C++ 回调函数实现了 Wasm 标准输出到 Logcat 的完美重定向，确保 Wasm 应用在移动端稳定且可调试。</div></div></div></a><a class="pagination-related" href="/posts/ec6f752/" title="① Android JNI 入门指南"><img class="cover" src="/img/cover_bg2.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-27</div><div class="info-item-2">① Android JNI 入门指南</div></div><div class="info-2"><div class="info-item-1">Android JNI(Java Native Interface)入门教程，详细介绍如何在Android项目中集成和使用C/C++代码</div></div></div></a><a class="pagination-related" href="/posts/aa427719/" title="② Android JNI 串口通信"><img class="cover" src="/img/cover_bg4.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-27</div><div class="info-item-2">② Android JNI 串口通信</div></div><div class="info-2"><div class="info-item-1">详细介绍如何通过JNI在Android中打开和配置串口通信</div></div></div></a><a class="pagination-related" href="/posts/4b920fe4/" title="Kotlin 编译器插件测试：FIR 与 IR 测试机制解析"><img class="cover" src="/img/cover_bg4.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-22</div><div class="info-item-2">Kotlin 编译器插件测试：FIR 与 IR 测试机制解析</div></div><div class="info-2"><div class="info-item-1">深入探索 Kotlin 编译器插件的测试机制，核心围绕两种测试类型：用于验证编译时错误的诊断测试 (Diagnostic Test)，和用于验证运行时行为的黑盒代码生成测试 (Box Test)。本文将揭示测试指令（Test Directives）如何通过特殊注释来驱动和配置复杂的测试流程，并阐明测试类的继承关系如何从根本上决定了测试的行为和验证逻辑。</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="toc-number">1.</span> <span class="toc-text">适用范围</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E4%B8%8E%E7%89%88%E6%9C%AC%E7%A1%AE%E8%AE%A4"><span class="toc-number">2.</span> <span class="toc-text">工具与版本确认</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E4%B8%8E%E7%BB%93%E6%9E%84%E9%AA%8C%E8%AF%81"><span class="toc-number">3.</span> <span class="toc-text">构建与结构验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Wasmtime-%E8%BF%90%E8%A1%8C%E6%B5%8B%E8%AF%95"><span class="toc-number">4.</span> <span class="toc-text">Wasmtime 运行测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#WASI-Command-%E6%A8%A1%E5%9D%97"><span class="toc-number">4.1.</span> <span class="toc-text">WASI Command 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Reactor-%E6%88%96%E5%BA%93%E6%A8%A1%E5%9D%97"><span class="toc-number">4.2.</span> <span class="toc-text">Reactor 或库模块</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Wasmtime-AOT-%E7%BC%96%E8%AF%91"><span class="toc-number">5.</span> <span class="toc-text">Wasmtime AOT 编译</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B-AOT-%E5%8E%9F%E7%94%9F%E4%BB%A3%E7%A0%81"><span class="toc-number">5.1.</span> <span class="toc-text">查看 AOT 原生代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-wasm-tools-%E9%A2%84%E8%A7%88%E4%B8%8E%E5%88%86%E6%9E%90"><span class="toc-number">6.</span> <span class="toc-text">使用 wasm-tools 预览与分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BE%93%E5%87%BA-WAT-%E6%96%87%E6%9C%AC"><span class="toc-number">6.1.</span> <span class="toc-text">输出 WAT 文本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E8%8A%82%E5%8C%BA%E3%80%81%E5%85%83%E6%95%B0%E6%8D%AE%E5%92%8C%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%81%8F%E7%A7%BB"><span class="toc-number">6.2.</span> <span class="toc-text">查看节区、元数据和二进制偏移</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WIT-%E4%B8%8E-Component-Model"><span class="toc-number">6.3.</span> <span class="toc-text">WIT 与 Component Model</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%A4%E4%B8%AA%E6%A8%A1%E5%9D%97%E7%9A%84%E5%AE%8C%E6%95%B4%E5%AF%B9%E6%AF%94"><span class="toc-number">7.</span> <span class="toc-text">两个模块的完整对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%BB%93%E8%AE%BA"><span class="toc-number">8.</span> <span class="toc-text">常见结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">9.</span> <span class="toc-text">参考资料</span></a></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url(/img/home_top.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2023 - 2026 By crowforkotlin</span></div><div class="footer_custom_text">欢迎到此一游~</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: 'Ov23liNYzLaBrOTZBvuB',
+      clientSecret: '872025f8de5446e9dfc8acea0dcce2d0a36daac8',
+      repo: 'crowforkotlin-blog-comment',
+      owner: 'crowforkotlin',
+      admin: ['crowforkotlin'],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || 'b7e5bbc29da1dd897900aa536270c7fb'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script src="/js/crystal-cursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="177" alpha="0.7" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="77" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
