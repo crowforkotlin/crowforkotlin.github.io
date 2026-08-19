@@ -20,7 +20,7 @@ input, textarea, [contenteditable] {
 
 /* 禁用状态光标 */
 [disabled] {
-    cursor: url('/img/mouse/unavailable.cur'), not-allowed !important;
+    cursor: url('/img/mouse/unavailiable.cur'), not-allowed !important;
 }
 
 /* 忙碌状态光标 */
