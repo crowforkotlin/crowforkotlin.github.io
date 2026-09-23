@@ -1,0 +1,31 @@
+/* ChillRound (寒蝉半圆体) is distributed under SIL Open Font License 1.1. See /fonts/OFL.txt. */
+@font-face {
+  font-family: 'ChillRoundM';
+  src: local('ChillRoundM'), local('寒蝉半圆体'), url('/fonts/ChillRoundM-SemiBold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+body,
+button,
+input,
+select,
+textarea,
+pre,
+code,
+kbd,
+samp {
+  font-family: 'ChillRoundM', '寒蝉半圆体', sans-serif;
+  font-weight: 600;
+}
+
+.highlight,
+.highlight pre,
+.highlight code {
+  font-family: 'ChillRoundM', '寒蝉半圆体', sans-serif !important;
+}
+
+#article-container kbd {
+  font-family: 'ChillRoundM', '寒蝉半圆体', sans-serif !important;
+}

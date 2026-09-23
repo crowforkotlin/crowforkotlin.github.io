@@ -1,4 +1,5 @@
-Copyright 2022 The Maple Mono Project Authors (https://github.com/subframe7536/maple-font)
+Copyright 2021 The Zen Maru Gothic Authors (https://github.com/googlefonts/zen-marugothic)
+ChillRound (寒蝉半圆体) by Warren2060 (https://github.com/Warren2060), based on Zen Maru Gothic.
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

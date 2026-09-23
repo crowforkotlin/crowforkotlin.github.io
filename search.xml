@@ -301,9 +301,9 @@
       
         <tags>
             
-            <tag> Hexo </tag>
-            
             <tag> Shell </tag>
+            
+            <tag> Hexo </tag>
             
         </tags>
       
@@ -462,11 +462,11 @@
       
         <tags>
             
+            <tag> Zipline </tag>
+            
             <tag> Library </tag>
             
             <tag> KMP </tag>
-            
-            <tag> Zipline </tag>
             
             <tag> Bridge </tag>
             
@@ -611,13 +611,13 @@
       
         <tags>
             
-            <tag> Shell </tag>
-            
             <tag> Android </tag>
             
             <tag> ADB </tag>
             
             <tag> Linux </tag>
+            
+            <tag> Shell </tag>
             
         </tags>
       
@@ -885,37 +885,6 @@
     
     
     <entry>
-      <title>Android 虚拟机 Root 配置指南</title>
-      <link href="/posts/dbd66528/"/>
-      <url>/posts/dbd66528/</url>
-      
-        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h2 id="🛠️-工具介绍"><a href="#🛠️-工具介绍" class="headerlink" title="🛠️ 工具介绍"></a>🛠️ 工具介绍</h2><div class="note blue icon-padding modern"><i class="note-icon fab fa-github"></i><p><strong>开源工具：RootAVD</strong></p><ul><li>项目地址：<a href="https://github.com/crowforkotlin/rootAVD">RootAVD - GitHub</a></li><li>专门用于Android虚拟机Root的自动化工具</li><li>支持多种Android API版本</li></ul></div><h2 id="🚀-操作流程"><a href="#🚀-操作流程" class="headerlink" title="🚀 操作流程"></a>🚀 操作流程</h2><div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">虚拟机创建</button><button type="button" class="tab">Root安装</button><button type="button" class="tab">Magisk配置</button></div><div class="tab-contents"><div class="tab-item-content active"><h3 id="📱-选择虚拟机配置"><a href="#📱-选择虚拟机配置" class="headerlink" title="📱 选择虚拟机配置"></a>📱 选择虚拟机配置</h3><div class="note warning icon-padding modern"><i class="note-icon fas fa-exclamation-triangle"></i><p><strong>推荐配置：</strong></p><ul><li>Android API 25 (Android 7.1)</li><li>架构：64位</li><li>类型：Google APIs</li></ul></div><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 创建虚拟机后建议重新命名</span><span class="token comment"># 例如：RootAvd25、RootAvdXX</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre><div class="note info icon-padding modern"><i class="note-icon fas fa-info-circle"></i><p><strong>版本选择说明：</strong><br>经测试API 35、34版本可能遇到问题，API 25稳定性较好</p></div></div><div class="tab-item-content"><h3 id="🔧-执行Root操作"><a href="#🔧-执行Root操作" class="headerlink" title="🔧 执行Root操作"></a>🔧 执行Root操作</h3><div class="note success icon-padding modern"><i class="note-icon fas fa-magic"></i><p><strong>自动Root流程：</strong></p><ol><li>运行RootAVD脚本选择对应镜像</li><li>工具会自动安装Magisk</li><li>打开Magisk统一权限，等待5秒自动重启</li></ol></div><h3 id="⚙️-重要配置"><a href="#⚙️-重要配置" class="headerlink" title="⚙️ 重要配置"></a>⚙️ 重要配置</h3><div class="note primary icon-padding modern"><i class="note-icon fas fa-cogs"></i><p><strong>参考配置说明：</strong><br>详见 <a href="https://github.com/crowforkotlin/rootAVD?tab=readme-ov-file#automotive-notes">RootAVD Notes</a></p></div></div><div class="tab-item-content"><h3 id="🎯-Magisk设置"><a href="#🎯-Magisk设置" class="headerlink" title="🎯 Magisk设置"></a>🎯 Magisk设置</h3><div class="note purple icon-padding modern"><i class="note-icon fas fa-android"></i><p><strong>Magisk配置步骤：</strong></p></div><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 1. 勾选启用Magisk</span><span class="token comment"># 2. Magisk App -> Settings -> Multiuser Mode -> User-Independent</span><span class="token comment"># 3. 重启AVD</span><span class="token comment"># 4. 在Magisk中选择reboot</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre><h3 id="🔓-系统写入权限"><a href="#🔓-系统写入权限" class="headerlink" title="🔓 系统写入权限"></a>🔓 系统写入权限</h3><div class="note orange icon-padding modern"><i class="note-icon fas fa-terminal"></i><p><strong>启用系统写入权限：</strong></p></div><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 以可写系统模式运行AVD</span>emulator -writable-system <span class="token parameter variable">-avd</span> Avd71<span class="token comment"># 后续可通过mount、remount挂载操作</span><span class="token comment"># 实现系统文件的增删改功能</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div><h2 id="🔗-相关链接"><a href="#🔗-相关链接" class="headerlink" title="🔗 相关链接"></a>🔗 相关链接</h2><div class="btn-center"><a class="btn-beautify blue larger" href="https://github.com/crowforkotlin/rootAVD" title="RootAVD工具"><i class="fab fa-github"></i><span>RootAVD工具</span></a><a class="btn-beautify green larger" href="https://github.com/topjohnwu/Magisk" title="Magisk项目"><i class="fab fa-github"></i><span>Magisk项目</span></a></div>]]></content>
-      
-      
-      <categories>
-          
-          <category> Android </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Android </tag>
-            
-            <tag> AVD </tag>
-            
-            <tag> Magisk </tag>
-            
-            <tag> Root </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Android Fragment 重建时动态视图的状态恢复</title>
       <link href="/posts/682aa546/"/>
       <url>/posts/682aa546/</url>
@@ -941,6 +910,37 @@
             <tag> Navigation </tag>
             
             <tag> UI </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Android 虚拟机 Root 配置指南</title>
+      <link href="/posts/dbd66528/"/>
+      <url>/posts/dbd66528/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h2 id="🛠️-工具介绍"><a href="#🛠️-工具介绍" class="headerlink" title="🛠️ 工具介绍"></a>🛠️ 工具介绍</h2><div class="note blue icon-padding modern"><i class="note-icon fab fa-github"></i><p><strong>开源工具：RootAVD</strong></p><ul><li>项目地址：<a href="https://github.com/crowforkotlin/rootAVD">RootAVD - GitHub</a></li><li>专门用于Android虚拟机Root的自动化工具</li><li>支持多种Android API版本</li></ul></div><h2 id="🚀-操作流程"><a href="#🚀-操作流程" class="headerlink" title="🚀 操作流程"></a>🚀 操作流程</h2><div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">虚拟机创建</button><button type="button" class="tab">Root安装</button><button type="button" class="tab">Magisk配置</button></div><div class="tab-contents"><div class="tab-item-content active"><h3 id="📱-选择虚拟机配置"><a href="#📱-选择虚拟机配置" class="headerlink" title="📱 选择虚拟机配置"></a>📱 选择虚拟机配置</h3><div class="note warning icon-padding modern"><i class="note-icon fas fa-exclamation-triangle"></i><p><strong>推荐配置：</strong></p><ul><li>Android API 25 (Android 7.1)</li><li>架构：64位</li><li>类型：Google APIs</li></ul></div><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 创建虚拟机后建议重新命名</span><span class="token comment"># 例如：RootAvd25、RootAvdXX</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre><div class="note info icon-padding modern"><i class="note-icon fas fa-info-circle"></i><p><strong>版本选择说明：</strong><br>经测试API 35、34版本可能遇到问题，API 25稳定性较好</p></div></div><div class="tab-item-content"><h3 id="🔧-执行Root操作"><a href="#🔧-执行Root操作" class="headerlink" title="🔧 执行Root操作"></a>🔧 执行Root操作</h3><div class="note success icon-padding modern"><i class="note-icon fas fa-magic"></i><p><strong>自动Root流程：</strong></p><ol><li>运行RootAVD脚本选择对应镜像</li><li>工具会自动安装Magisk</li><li>打开Magisk统一权限，等待5秒自动重启</li></ol></div><h3 id="⚙️-重要配置"><a href="#⚙️-重要配置" class="headerlink" title="⚙️ 重要配置"></a>⚙️ 重要配置</h3><div class="note primary icon-padding modern"><i class="note-icon fas fa-cogs"></i><p><strong>参考配置说明：</strong><br>详见 <a href="https://github.com/crowforkotlin/rootAVD?tab=readme-ov-file#automotive-notes">RootAVD Notes</a></p></div></div><div class="tab-item-content"><h3 id="🎯-Magisk设置"><a href="#🎯-Magisk设置" class="headerlink" title="🎯 Magisk设置"></a>🎯 Magisk设置</h3><div class="note purple icon-padding modern"><i class="note-icon fas fa-android"></i><p><strong>Magisk配置步骤：</strong></p></div><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 1. 勾选启用Magisk</span><span class="token comment"># 2. Magisk App -> Settings -> Multiuser Mode -> User-Independent</span><span class="token comment"># 3. 重启AVD</span><span class="token comment"># 4. 在Magisk中选择reboot</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre><h3 id="🔓-系统写入权限"><a href="#🔓-系统写入权限" class="headerlink" title="🔓 系统写入权限"></a>🔓 系统写入权限</h3><div class="note orange icon-padding modern"><i class="note-icon fas fa-terminal"></i><p><strong>启用系统写入权限：</strong></p></div><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 以可写系统模式运行AVD</span>emulator -writable-system <span class="token parameter variable">-avd</span> Avd71<span class="token comment"># 后续可通过mount、remount挂载操作</span><span class="token comment"># 实现系统文件的增删改功能</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div><h2 id="🔗-相关链接"><a href="#🔗-相关链接" class="headerlink" title="🔗 相关链接"></a>🔗 相关链接</h2><div class="btn-center"><a class="btn-beautify blue larger" href="https://github.com/crowforkotlin/rootAVD" title="RootAVD工具"><i class="fab fa-github"></i><span>RootAVD工具</span></a><a class="btn-beautify green larger" href="https://github.com/topjohnwu/Magisk" title="Magisk项目"><i class="fab fa-github"></i><span>Magisk项目</span></a></div>]]></content>
+      
+      
+      <categories>
+          
+          <category> Android </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Android </tag>
+            
+            <tag> AVD </tag>
+            
+            <tag> Magisk </tag>
+            
+            <tag> Root </tag>
             
         </tags>
       
@@ -1118,13 +1118,13 @@
       
         <tags>
             
-            <tag> Kotlin </tag>
-            
             <tag> Android </tag>
             
             <tag> JNI </tag>
             
             <tag> Java </tag>
+            
+            <tag> Kotlin </tag>
             
             <tag> C </tag>
             
@@ -1153,13 +1153,13 @@
       
         <tags>
             
-            <tag> Kotlin </tag>
-            
             <tag> Android </tag>
             
             <tag> JNI </tag>
             
             <tag> Java </tag>
+            
+            <tag> Kotlin </tag>
             
             <tag> C </tag>
             
